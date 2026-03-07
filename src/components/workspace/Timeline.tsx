@@ -1,10 +1,11 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { useCompositionStore } from '../../store/useCompositionStore';
 import { useTransportStore } from '../../store/useTransportStore';
 import TrackLane from './TrackLane';
 
 const PIXELS_PER_BEAT = 30;
 const TOTAL_BEATS = 128;
+const TRACK_HEIGHT = 64; // h-16 = 4rem = 64px
 
 interface TimelineProps {
   selectedSegmentId?: string;
@@ -12,10 +13,81 @@ interface TimelineProps {
 }
 
 export default function Timeline({ selectedSegmentId, onSelectSegment }: TimelineProps) {
-  const { tracks, bpm, addTrack } = useCompositionStore();
+  const { tracks, bpm, addTrack, updateSegment, moveSegment } = useCompositionStore();
   const { playheadPosition, seek, loopEnabled, loopStart, loopEnd, setLoopEnabled, setLoopRegion } = useTransportStore();
   const rulerRef = useRef<HTMLDivElement>(null);
+  const tracksRef = useRef<HTMLDivElement>(null);
   const loopDragRef = useRef<{ startBeat: number } | null>(null);
+
+  // Cross-track drag state
+  const segDragRef = useRef<{
+    segmentId: string;
+    sourceTrackId: string;
+    startX: number;
+    startY: number;
+    originalBeat: number;
+  } | null>(null);
+  const [dropTargetTrackId, setDropTargetTrackId] = useState<string | null>(null);
+
+  const handleSegmentDragStart = useCallback(
+    (trackId: string, segmentId: string, startBeat: number, e: React.MouseEvent) => {
+      segDragRef.current = {
+        segmentId,
+        sourceTrackId: trackId,
+        startX: e.clientX,
+        startY: e.clientY,
+        originalBeat: startBeat,
+      };
+    },
+    []
+  );
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!segDragRef.current) return;
+      const drag = segDragRef.current;
+
+      // Horizontal: update beat position
+      const dx = e.clientX - drag.startX;
+      const deltaBeat = dx / PIXELS_PER_BEAT;
+      const newBeat = Math.max(0, Math.round((drag.originalBeat + deltaBeat) * 4) / 4);
+      updateSegment(drag.sourceTrackId, drag.segmentId, { startBeat: newBeat });
+
+      // Vertical: determine target track
+      if (tracksRef.current) {
+        const rect = tracksRef.current.getBoundingClientRect();
+        const y = e.clientY - rect.top + tracksRef.current.scrollTop;
+        const trackIndex = Math.floor(y / TRACK_HEIGHT);
+        const targetTrack = tracks[Math.max(0, Math.min(trackIndex, tracks.length - 1))];
+        if (targetTrack && targetTrack.id !== drag.sourceTrackId) {
+          setDropTargetTrackId(targetTrack.id);
+        } else {
+          setDropTargetTrackId(null);
+        }
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (segDragRef.current && dropTargetTrackId) {
+        const drag = segDragRef.current;
+        // Find current beat of the segment (it may have been updated during drag)
+        const sourceTrack = tracks.find((t) => t.id === drag.sourceTrackId);
+        const seg = sourceTrack?.segments.find((s) => s.id === drag.segmentId);
+        if (seg) {
+          moveSegment(drag.sourceTrackId, dropTargetTrackId, drag.segmentId, seg.startBeat);
+        }
+      }
+      segDragRef.current = null;
+      setDropTargetTrackId(null);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [tracks, dropTargetTrackId, updateSegment, moveSegment]);
 
   const handleRulerMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -126,7 +198,7 @@ export default function Timeline({ selectedSegmentId, onSelectSegment }: Timelin
       </div>
 
       {/* Tracks */}
-      <div className="relative flex-1 overflow-auto">
+      <div ref={tracksRef} className="relative flex-1 overflow-auto">
         <div style={{ minWidth: TOTAL_BEATS * PIXELS_PER_BEAT + 192 }}>
           {tracks.length === 0 ? (
             <div className="flex h-40 items-center justify-center text-gray-400 dark:text-gray-600">
@@ -141,6 +213,8 @@ export default function Timeline({ selectedSegmentId, onSelectSegment }: Timelin
                 totalBeats={TOTAL_BEATS}
                 selectedSegmentId={selectedSegmentId}
                 onSelectSegment={onSelectSegment}
+                onSegmentDragStart={handleSegmentDragStart}
+                dropHighlight={dropTargetTrackId === track.id}
               />
             ))
           )}

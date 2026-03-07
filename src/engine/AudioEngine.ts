@@ -1,4 +1,5 @@
 import { useTransportStore } from '../store/useTransportStore';
+import { useCompositionStore } from '../store/useCompositionStore';
 
 class AudioEngine {
   private context: AudioContext | null = null;
@@ -63,6 +64,34 @@ class AudioEngine {
     this.stopPlayheadUpdate();
   }
 
+  /** Start only the playhead animation (called by usePlayback hook) */
+  startPlayheadAnimation(): void {
+    const transport = useTransportStore.getState();
+    const ctx = this.getContext();
+    this.playbackStartTime = ctx.currentTime;
+    this.playbackStartPosition = transport.playheadPosition;
+    this.startPlayheadUpdate();
+  }
+
+  stopPlayheadUpdate(): void {
+    if (this.animFrameId !== null) {
+      cancelAnimationFrame(this.animFrameId);
+      this.animFrameId = null;
+    }
+  }
+
+  private computeEndBeat(): number {
+    const { tracks } = useCompositionStore.getState();
+    let maxBeat = 0;
+    for (const track of tracks) {
+      for (const seg of track.segments) {
+        const end = seg.startBeat + seg.durationBeats;
+        if (end > maxBeat) maxBeat = end;
+      }
+    }
+    return maxBeat;
+  }
+
   private startPlayheadUpdate(): void {
     this.stopPlayheadUpdate();
 
@@ -72,7 +101,7 @@ class AudioEngine {
 
       const ctx = this.getContext();
       const elapsed = ctx.currentTime - this.playbackStartTime;
-      const bpm = 120; // will be read from composition store
+      const bpm = useCompositionStore.getState().bpm;
       const currentBeat = this.playbackStartPosition + this.secondsToBeats(elapsed, bpm);
 
       if (transport.loopEnabled && currentBeat >= transport.loopEnd && transport.loopEnd > transport.loopStart) {
@@ -80,6 +109,15 @@ class AudioEngine {
         this.playbackStartTime = ctx.currentTime;
         transport.setPlayheadPosition(transport.loopStart);
       } else {
+        // Auto-stop at end of composition (skip while recording)
+        const endBeat = this.computeEndBeat();
+        if (!transport.isRecording && endBeat > 0 && currentBeat >= endBeat) {
+          transport.setPlayheadPosition(endBeat);
+          transport.stop();
+          this.stopPlayheadUpdate();
+          this.onAutoStop?.();
+          return;
+        }
         transport.setPlayheadPosition(currentBeat);
       }
 
@@ -89,12 +127,8 @@ class AudioEngine {
     this.animFrameId = requestAnimationFrame(update);
   }
 
-  private stopPlayheadUpdate(): void {
-    if (this.animFrameId !== null) {
-      cancelAnimationFrame(this.animFrameId);
-      this.animFrameId = null;
-    }
-  }
+  /** Callback invoked when playback auto-stops at end of composition */
+  onAutoStop: (() => void) | null = null;
 
   dispose(): void {
     this.stopPlayheadUpdate();

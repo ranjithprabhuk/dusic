@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useCompositionStore } from '../store/useCompositionStore';
 import { useKeyboardMapping } from '../hooks/useKeyboardMapping';
+import { usePlayback } from '../hooks/usePlayback';
 import { useUndoRedo } from '../hooks/useUndoRedo';
 import { useBeforeUnload } from '../hooks/useBeforeUnload';
 import TransportBar from '../components/workspace/TransportBar';
@@ -21,6 +22,7 @@ type Dialog = 'save' | 'load' | 'export' | 'import' | null;
 export default function WorkspacePage() {
   const { tracks } = useCompositionStore();
   useKeyboardMapping();
+  usePlayback();
   useUndoRedo();
   useBeforeUnload();
   const [selectedTrackId, setSelectedTrackId] = useState<string>();

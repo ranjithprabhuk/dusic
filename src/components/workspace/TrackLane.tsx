@@ -1,4 +1,3 @@
-import { useRef, useCallback, useEffect } from 'react';
 import { useCompositionStore } from '../../store/useCompositionStore';
 import type { Track } from '../../types/composition';
 
@@ -7,7 +6,9 @@ interface TrackLaneProps {
   pixelsPerBeat: number;
   totalBeats: number;
   onSelectSegment?: (trackId: string, segmentId: string) => void;
+  onSegmentDragStart?: (trackId: string, segmentId: string, startBeat: number, e: React.MouseEvent) => void;
   selectedSegmentId?: string;
+  dropHighlight?: boolean;
 }
 
 export default function TrackLane({
@@ -15,53 +16,14 @@ export default function TrackLane({
   pixelsPerBeat,
   totalBeats,
   onSelectSegment,
+  onSegmentDragStart,
   selectedSegmentId,
+  dropHighlight,
 }: TrackLaneProps) {
-  const { updateTrack, updateSegment } = useCompositionStore();
-
-  const dragRef = useRef<{
-    segmentId: string;
-    startX: number;
-    originalBeat: number;
-  } | null>(null);
-
-  const handleSegmentMouseDown = useCallback(
-    (segmentId: string, startBeat: number, e: React.MouseEvent) => {
-      if (e.button !== 0) return;
-      e.preventDefault();
-      dragRef.current = {
-        segmentId,
-        startX: e.clientX,
-        originalBeat: startBeat,
-      };
-      onSelectSegment?.(track.id, segmentId);
-    },
-    [track.id, onSelectSegment]
-  );
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!dragRef.current) return;
-      const dx = e.clientX - dragRef.current.startX;
-      const deltaBeat = dx / pixelsPerBeat;
-      const newBeat = Math.max(0, Math.round((dragRef.current.originalBeat + deltaBeat) * 4) / 4);
-      updateSegment(track.id, dragRef.current.segmentId, { startBeat: newBeat });
-    };
-
-    const handleMouseUp = () => {
-      dragRef.current = null;
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [track.id, pixelsPerBeat, updateSegment]);
+  const { updateTrack } = useCompositionStore();
 
   return (
-    <div className="flex border-b border-gray-200 dark:border-gray-800">
+    <div className={`flex border-b border-gray-200 dark:border-gray-800 ${dropHighlight ? 'bg-indigo-50 dark:bg-indigo-900/20' : ''}`}>
       {/* Track Controls */}
       <div className="flex w-28 shrink-0 flex-col gap-1 border-r border-gray-200 bg-gray-50 px-2 py-2 sm:w-48 sm:px-3 dark:border-gray-800 dark:bg-gray-900/50">
         <span className="text-xs font-medium truncate sm:text-sm">{track.name}</span>
@@ -106,7 +68,12 @@ export default function TrackLane({
         {track.segments.map((seg) => (
           <div
             key={seg.id}
-            onMouseDown={(e) => handleSegmentMouseDown(seg.id, seg.startBeat, e)}
+            onMouseDown={(e) => {
+              if (e.button !== 0) return;
+              e.preventDefault();
+              onSelectSegment?.(track.id, seg.id);
+              onSegmentDragStart?.(track.id, seg.id, seg.startBeat, e);
+            }}
             className={`absolute top-1 bottom-1 cursor-grab rounded border transition-colors active:cursor-grabbing ${
               selectedSegmentId === seg.id
                 ? 'border-indigo-400 bg-indigo-200/80 dark:border-indigo-500 dark:bg-indigo-800/60'

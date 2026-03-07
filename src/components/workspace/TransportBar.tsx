@@ -1,14 +1,80 @@
 import { useTransportStore } from '../../store/useTransportStore';
 import { useCompositionStore } from '../../store/useCompositionStore';
+import { audioEngine } from '../../engine/AudioEngine';
+import { playbackEngine } from '../../engine/PlaybackEngine';
+import { instrumentEngine } from '../../engine/InstrumentEngine';
+import { metronome } from '../../engine/Metronome';
+
+// Auto-stop: when AudioEngine detects end of composition, clean up playback
+audioEngine.onAutoStop = () => {
+  playbackEngine.stop();
+  metronome.stop();
+};
+
+async function handlePlay() {
+  const transport = useTransportStore.getState();
+  if (transport.isPlaying) {
+    // Pause
+    transport.pause();
+    playbackEngine.stop();
+    metronome.stop();
+    audioEngine.stopPlayheadUpdate();
+    return;
+  }
+
+  // Resume AudioContext from user gesture (critical for autoplay policy)
+  await audioEngine.ensureResumed();
+  await instrumentEngine.init();
+
+  const { bpm } = useCompositionStore.getState();
+
+  transport.play();
+  audioEngine.startPlayheadAnimation();
+  playbackEngine.start(transport.playheadPosition);
+
+  if (transport.metronomeEnabled) {
+    metronome.start(bpm);
+  }
+}
+
+async function handleRecord() {
+  const transport = useTransportStore.getState();
+  await audioEngine.ensureResumed();
+  await instrumentEngine.init();
+
+  transport.toggleRecord();
+
+  const updated = useTransportStore.getState();
+  if (updated.isPlaying && updated.isRecording) {
+    const { bpm } = useCompositionStore.getState();
+    audioEngine.startPlayheadAnimation();
+    playbackEngine.start(updated.playheadPosition);
+    if (updated.metronomeEnabled) {
+      metronome.start(bpm);
+    }
+  } else if (!updated.isPlaying) {
+    playbackEngine.stop();
+    metronome.stop();
+    audioEngine.stopPlayheadUpdate();
+  }
+}
+
+function handleStop() {
+  const transport = useTransportStore.getState();
+  transport.stop();
+  playbackEngine.stop();
+  metronome.stop();
+  audioEngine.stopPlayheadUpdate();
+}
 
 export default function TransportBar() {
   const {
     isPlaying, isRecording, metronomeEnabled, gridSnap, loopEnabled,
-    play, pause, stop, toggleRecord,
     setMetronomeEnabled, setGridSnap, setLoopEnabled,
     playheadPosition,
   } = useTransportStore();
-  const { bpm, setBpm } = useCompositionStore();
+  const { bpm, setBpm, tracks } = useCompositionStore();
+  const hasTracks = tracks.length > 0;
 
   const formatPosition = (beats: number) => {
     const bar = Math.floor(beats / 4) + 1;
@@ -21,8 +87,9 @@ export default function TransportBar() {
       {/* Transport Controls */}
       <div className="flex items-center gap-0.5 sm:gap-1">
         <button
-          onClick={stop}
-          className="rounded p-2 hover:bg-gray-100 sm:p-1.5 dark:hover:bg-gray-800"
+          onClick={handleStop}
+          disabled={!hasTracks}
+          className={`rounded p-2 sm:p-1.5 ${hasTracks ? 'hover:bg-gray-100 dark:hover:bg-gray-800' : 'cursor-not-allowed opacity-30'}`}
           title="Stop"
         >
           <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -31,8 +98,9 @@ export default function TransportBar() {
         </button>
 
         <button
-          onClick={isPlaying ? pause : play}
-          className="rounded p-2 hover:bg-gray-100 sm:p-1.5 dark:hover:bg-gray-800"
+          onClick={handlePlay}
+          disabled={!hasTracks}
+          className={`rounded p-2 sm:p-1.5 ${hasTracks ? 'hover:bg-gray-100 dark:hover:bg-gray-800' : 'cursor-not-allowed opacity-30'}`}
           title={isPlaying ? 'Pause' : 'Play'}
         >
           {isPlaying ? (
@@ -47,8 +115,9 @@ export default function TransportBar() {
         </button>
 
         <button
-          onClick={toggleRecord}
-          className={`rounded p-2 sm:p-1.5 ${isRecording ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+          onClick={handleRecord}
+          disabled={!hasTracks}
+          className={`rounded p-2 sm:p-1.5 ${!hasTracks ? 'cursor-not-allowed opacity-30' : isRecording ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
           title="Record"
         >
           <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

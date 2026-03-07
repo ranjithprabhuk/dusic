@@ -70,6 +70,10 @@ class SampleEngine {
     source.start(ctx.currentTime);
   }
 
+  getBuffer(url: string): AudioBuffer | undefined {
+    return this.bufferCache.get(url);
+  }
+
   isSampleLoaded(url: string): boolean {
     return this.bufferCache.has(url);
   }
