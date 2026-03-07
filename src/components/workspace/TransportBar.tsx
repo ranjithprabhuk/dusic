@@ -11,6 +11,10 @@ audioEngine.onAutoStop = () => {
   metronome.stop();
 };
 
+audioEngine.onLoop = (loopStartBeat) => {
+  playbackEngine.resetForLoop(loopStartBeat);
+};
+
 async function handlePlay() {
   const transport = useTransportStore.getState();
   if (transport.isPlaying) {

@@ -11,9 +11,6 @@ import { metronome } from '../engine/Metronome';
  */
 export function usePlayback() {
   const isPlaying = useTransportStore((s) => s.isPlaying);
-  const loopEnabled = useTransportStore((s) => s.loopEnabled);
-  const loopStart = useTransportStore((s) => s.loopStart);
-  const loopEnd = useTransportStore((s) => s.loopEnd);
   const bpm = useCompositionStore((s) => s.bpm);
 
   // Handle BPM changes while playing
@@ -26,21 +23,6 @@ export function usePlayback() {
     playbackEngine.start(transport.playheadPosition);
     audioEngine.startPlayheadAnimation();
   }, [bpm]);
-
-  // Handle loop reset — when playhead passes loopEnd, reset scheduling window
-  useEffect(() => {
-    if (!isPlaying || !loopEnabled) return;
-
-    const checkLoop = () => {
-      const transport = useTransportStore.getState();
-      if (transport.loopEnabled && loopEnd > loopStart && transport.playheadPosition >= loopEnd) {
-        playbackEngine.resetForLoop(loopStart);
-      }
-    };
-
-    const id = setInterval(checkLoop, 50);
-    return () => clearInterval(id);
-  }, [isPlaying, loopEnabled, loopStart, loopEnd]);
 
   // Cleanup on unmount
   useEffect(() => {

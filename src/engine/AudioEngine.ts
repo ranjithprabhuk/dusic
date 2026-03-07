@@ -104,10 +104,23 @@ class AudioEngine {
       const bpm = useCompositionStore.getState().bpm;
       const currentBeat = this.playbackStartPosition + this.secondsToBeats(elapsed, bpm);
 
-      if (transport.loopEnabled && currentBeat >= transport.loopEnd && transport.loopEnd > transport.loopStart) {
-        this.playbackStartPosition = transport.loopStart;
-        this.playbackStartTime = ctx.currentTime;
-        transport.setPlayheadPosition(transport.loopStart);
+      if (transport.loopEnabled) {
+        // Determine loop bounds — default to entire composition if no region set
+        let loopS = transport.loopStart;
+        let loopE = transport.loopEnd;
+        if (loopE <= loopS) {
+          loopS = 0;
+          loopE = this.computeEndBeat();
+        }
+
+        if (loopE > loopS && currentBeat >= loopE) {
+          this.playbackStartPosition = loopS;
+          this.playbackStartTime = ctx.currentTime;
+          transport.setPlayheadPosition(loopS);
+          this.onLoop?.(loopS);
+        } else {
+          transport.setPlayheadPosition(currentBeat);
+        }
       } else {
         // Auto-stop at end of composition (skip while recording)
         const endBeat = this.computeEndBeat();
@@ -129,6 +142,9 @@ class AudioEngine {
 
   /** Callback invoked when playback auto-stops at end of composition */
   onAutoStop: (() => void) | null = null;
+
+  /** Callback invoked when playback loops back to loop start */
+  onLoop: ((loopStartBeat: number) => void) | null = null;
 
   dispose(): void {
     this.stopPlayheadUpdate();
