@@ -18,6 +18,8 @@ export default function Timeline({ selectedSegmentId, onSelectSegment }: Timelin
   const rulerRef = useRef<HTMLDivElement>(null);
   const tracksRef = useRef<HTMLDivElement>(null);
   const loopDragRef = useRef<{ startBeat: number } | null>(null);
+  const seekDragRef = useRef<boolean>(false);
+  const playheadDragRef = useRef<boolean>(false);
 
   // Cross-track drag state
   const segDragRef = useRef<{
@@ -102,6 +104,7 @@ export default function Timeline({ selectedSegmentId, onSelectSegment }: Timelin
         setLoopEnabled(true);
       } else {
         seek(beat);
+        seekDragRef.current = true;
       }
     },
     [seek, setLoopRegion, setLoopEnabled]
@@ -109,25 +112,56 @@ export default function Timeline({ selectedSegmentId, onSelectSegment }: Timelin
 
   const handleRulerMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!loopDragRef.current) return;
       const rect = e.currentTarget.getBoundingClientRect();
       const x = e.clientX - rect.left + (e.currentTarget.scrollLeft || 0);
       const beat = Math.max(0, x / PIXELS_PER_BEAT);
-      const start = Math.min(loopDragRef.current.startBeat, beat);
-      const end = Math.max(loopDragRef.current.startBeat, beat);
-      setLoopRegion(Math.round(start * 4) / 4, Math.round(end * 4) / 4);
+
+      if (loopDragRef.current) {
+        const start = Math.min(loopDragRef.current.startBeat, beat);
+        const end = Math.max(loopDragRef.current.startBeat, beat);
+        setLoopRegion(Math.round(start * 4) / 4, Math.round(end * 4) / 4);
+      } else if (seekDragRef.current) {
+        seek(beat);
+      }
     },
-    [setLoopRegion]
+    [setLoopRegion, seek]
   );
 
   const handleRulerMouseUp = useCallback(() => {
-    if (!loopDragRef.current) return;
-    loopDragRef.current = null;
-    // If loop region is too small, disable it
-    if (Math.abs(loopEnd - loopStart) < 0.5) {
-      setLoopEnabled(false);
+    if (loopDragRef.current) {
+      loopDragRef.current = null;
+      if (Math.abs(loopEnd - loopStart) < 0.5) {
+        setLoopEnabled(false);
+      }
     }
+    seekDragRef.current = false;
   }, [loopStart, loopEnd, setLoopEnabled]);
+
+  // Playhead drag on tracks area
+  const handlePlayheadDragStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    playheadDragRef.current = true;
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!playheadDragRef.current || !tracksRef.current) return;
+      const rect = tracksRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left + tracksRef.current.scrollLeft - 192;
+      const beat = Math.max(0, x / PIXELS_PER_BEAT);
+      seek(beat);
+    };
+    const handleMouseUp = () => {
+      playheadDragRef.current = false;
+    };
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [seek]);
 
   // Generate bar numbers for ruler
   const beatsPerBar = 4;
@@ -233,9 +267,13 @@ export default function Timeline({ selectedSegmentId, onSelectSegment }: Timelin
 
         {/* Playhead */}
         <div
-          className="pointer-events-none absolute top-0 bottom-0 w-px bg-red-500"
-          style={{ left: 192 + playheadPosition * PIXELS_PER_BEAT }}
-        />
+          className="absolute top-0 bottom-0 z-10 cursor-col-resize"
+          style={{ left: 192 + playheadPosition * PIXELS_PER_BEAT - 5, width: 11 }}
+          onMouseDown={handlePlayheadDragStart}
+        >
+          <div className="pointer-events-none absolute left-[5px] top-0 bottom-0 w-px bg-red-500" />
+          <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-0 w-0 border-l-[5px] border-r-[5px] border-t-[6px] border-l-transparent border-r-transparent border-t-red-500" />
+        </div>
       </div>
 
       {/* BPM display */}
