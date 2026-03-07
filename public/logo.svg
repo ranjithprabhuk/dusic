@@ -4,22 +4,44 @@
       <stop offset="0%" stop-color="#6366f1"/>
       <stop offset="100%" stop-color="#8b5cf6"/>
     </linearGradient>
-    <linearGradient id="wave" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#c7d2fe"/>
-      <stop offset="100%" stop-color="#e0e7ff"/>
-    </linearGradient>
   </defs>
   <!-- Rounded square background -->
   <rect width="512" height="512" rx="96" fill="url(#bg)"/>
-  <!-- Sound wave arcs (left side) -->
-  <path d="M140 256 Q140 190 170 150" stroke="url(#wave)" stroke-width="16" fill="none" stroke-linecap="round" opacity="0.35"/>
-  <path d="M110 256 Q110 165 155 110" stroke="url(#wave)" stroke-width="16" fill="none" stroke-linecap="round" opacity="0.2"/>
-  <path d="M140 256 Q140 322 170 362" stroke="url(#wave)" stroke-width="16" fill="none" stroke-linecap="round" opacity="0.35"/>
-  <path d="M110 256 Q110 347 155 402" stroke="url(#wave)" stroke-width="16" fill="none" stroke-linecap="round" opacity="0.2"/>
-  <!-- Music note -->
-  <path d="M240 130 L240 340 Q240 390 290 390 Q340 390 340 340 Q340 290 290 290 Q265 290 240 305 L240 130 Z" fill="white"/>
-  <!-- Second note head connected by beam -->
-  <path d="M240 130 L400 105 L400 280 Q400 330 350 330 Q300 330 300 280 Q300 230 350 230 Q375 230 400 245 L400 105" fill="white"/>
-  <!-- Beam connecting the two stems -->
-  <rect x="240" y="105" width="160" height="25" rx="4" fill="white"/>
+
+  <!-- Music note stem -->
+  <rect x="278" y="100" width="14" height="260" rx="7" fill="white"/>
+
+  <!-- Note head as "0" — a hollow oval -->
+  <ellipse cx="238" cy="360" rx="62" ry="48" fill="white"/>
+  <ellipse cx="238" cy="360" rx="34" ry="24" fill="url(#bg)"/>
+
+  <!-- Flag / beam from stem top -->
+  <path d="M292 100 Q360 110 340 170 Q330 200 292 190" fill="white"/>
+
+  <!-- Binary digits scattered along the stem and around the note -->
+  <text font-family="monospace" font-weight="bold" fill="white" opacity="0.25">
+    <tspan x="304" y="145" font-size="30">1</tspan>
+    <tspan x="300" y="200" font-size="24">0</tspan>
+    <tspan x="308" y="248" font-size="28">1</tspan>
+    <tspan x="296" y="300" font-size="22">1</tspan>
+  </text>
+
+  <!-- Floating binary particles -->
+  <text font-family="monospace" font-weight="bold" fill="white" opacity="0.15" font-size="32">
+    <tspan x="80" y="140">1</tspan>
+    <tspan x="120" y="200">0</tspan>
+    <tspan x="60" y="290">1</tspan>
+    <tspan x="110" y="370">0</tspan>
+    <tspan x="75" y="430">1</tspan>
+  </text>
+  <text font-family="monospace" font-weight="bold" fill="white" opacity="0.12" font-size="28">
+    <tspan x="380" y="300">0</tspan>
+    <tspan x="410" y="370">1</tspan>
+    <tspan x="370" y="430">0</tspan>
+    <tspan x="420" y="180">1</tspan>
+    <tspan x="400" y="240">0</tspan>
+  </text>
+
+  <!-- "0" inside the note head for emphasis -->
+  <text x="238" y="372" font-family="monospace" font-weight="bold" font-size="38" fill="white" text-anchor="middle" dominant-baseline="middle" opacity="0.9">0</text>
 </svg>

@@ -6,8 +6,24 @@
     </linearGradient>
   </defs>
   <rect width="32" height="32" rx="6" fill="url(#bg)"/>
-  <!-- Simplified double music note for small sizes -->
-  <path d="M11 7 L11 21.5 Q11 25 14.5 25 Q18 25 18 21.5 Q18 18 14.5 18 Q13 18 11 19.5 L11 7 Z" fill="white"/>
-  <path d="M11 7 L23 5 L23 17.5 Q23 21 19.5 21 Q16 21 16 17.5 Q16 14 19.5 14 Q21 14 23 15.5 L23 5" fill="white"/>
-  <rect x="11" y="5" width="12" height="2" rx="0.5" fill="white"/>
+
+  <!-- Note stem -->
+  <rect x="18" y="5" width="2" height="18" rx="1" fill="white"/>
+
+  <!-- Note head as "0" -->
+  <ellipse cx="14" cy="23" rx="5.5" ry="4.2" fill="white"/>
+  <ellipse cx="14" cy="23" rx="3" ry="2" fill="url(#bg)"/>
+
+  <!-- Flag -->
+  <path d="M20 5 Q26 6 24 11 Q23 13.5 20 13" fill="white"/>
+
+  <!-- Tiny binary digits -->
+  <text font-family="monospace" font-weight="bold" fill="white" opacity="0.3" font-size="5">
+    <tspan x="22" y="20">1</tspan>
+    <tspan x="21" y="10">0</tspan>
+  </text>
+  <text font-family="monospace" font-weight="bold" fill="white" opacity="0.2" font-size="4.5">
+    <tspan x="5" y="11">1</tspan>
+    <tspan x="7" y="17">0</tspan>
+  </text>
 </svg>
