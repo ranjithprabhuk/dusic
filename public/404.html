@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Dusic</title>
+    <script>
+      // SPA redirect for GitHub Pages
+      // Redirects all 404s to index.html preserving the path as a hash route
+      var path = window.location.pathname;
+      var base = '/dusic/';
+      if (path.startsWith(base)) {
+        var route = path.slice(base.length);
+        if (route && route !== 'index.html') {
+          window.location.replace(base + '#/' + route + window.location.search);
+        } else {
+          window.location.replace(base);
+        }
+      } else {
+        window.location.replace(base);
+      }
+    </script>
+  </head>
+  <body></body>
+</html>

@@ -1,0 +1,30 @@
+import type { InstrumentConfig } from '../types/instrument';
+
+export const piano: InstrumentConfig = {
+  id: 'piano',
+  name: 'Piano',
+  type: 'tonal',
+  icon: 'piano',
+  keyMappings: {
+    a: { key: 'a', label: 'C3', pitch: 48, frequency: 130.81, oscillatorType: 'sine' },
+    s: { key: 's', label: 'D3', pitch: 50, frequency: 146.83, oscillatorType: 'sine' },
+    d: { key: 'd', label: 'E3', pitch: 52, frequency: 164.81, oscillatorType: 'sine' },
+    f: { key: 'f', label: 'F3', pitch: 53, frequency: 174.61, oscillatorType: 'sine' },
+    g: { key: 'g', label: 'G3', pitch: 55, frequency: 196.0, oscillatorType: 'sine' },
+    h: { key: 'h', label: 'A3', pitch: 57, frequency: 220.0, oscillatorType: 'sine' },
+    j: { key: 'j', label: 'B3', pitch: 59, frequency: 246.94, oscillatorType: 'sine' },
+    k: { key: 'k', label: 'C4', pitch: 60, frequency: 261.63, oscillatorType: 'sine' },
+    l: { key: 'l', label: 'D4', pitch: 62, frequency: 293.66, oscillatorType: 'sine' },
+    ';': { key: ';', label: 'E4', pitch: 64, frequency: 329.63, oscillatorType: 'sine' },
+    q: { key: 'q', label: 'C4', pitch: 60, frequency: 261.63, oscillatorType: 'sine' },
+    w: { key: 'w', label: 'D4', pitch: 62, frequency: 293.66, oscillatorType: 'sine' },
+    e: { key: 'e', label: 'E4', pitch: 64, frequency: 329.63, oscillatorType: 'sine' },
+    r: { key: 'r', label: 'F4', pitch: 65, frequency: 349.23, oscillatorType: 'sine' },
+    t: { key: 't', label: 'G4', pitch: 67, frequency: 392.0, oscillatorType: 'sine' },
+    y: { key: 'y', label: 'A4', pitch: 69, frequency: 440.0, oscillatorType: 'sine' },
+    u: { key: 'u', label: 'B4', pitch: 71, frequency: 493.88, oscillatorType: 'sine' },
+    i: { key: 'i', label: 'C5', pitch: 72, frequency: 523.25, oscillatorType: 'sine' },
+    o: { key: 'o', label: 'D5', pitch: 74, frequency: 587.33, oscillatorType: 'sine' },
+    p: { key: 'p', label: 'E5', pitch: 76, frequency: 659.25, oscillatorType: 'sine' },
+  },
+};
