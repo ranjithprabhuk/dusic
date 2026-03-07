@@ -21,7 +21,7 @@ export default function EffectsPanel({ trackId, effects }: EffectsPanelProps) {
         <span className="text-sm font-medium">Effects</span>
       </div>
 
-      <div className="grid grid-cols-4 gap-px bg-gray-200 dark:bg-gray-800">
+      <div className="grid grid-cols-2 gap-px bg-gray-200 sm:grid-cols-4 dark:bg-gray-800">
         {/* Reverb */}
         <EffectSection
           title="Reverb"

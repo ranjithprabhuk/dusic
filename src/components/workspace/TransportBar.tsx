@@ -17,12 +17,12 @@ export default function TransportBar() {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-3 border-b border-gray-200 bg-white px-4 py-2 dark:border-gray-800 dark:bg-gray-900">
+    <div className="flex flex-wrap items-center gap-2 border-b border-gray-200 bg-white px-2 py-1.5 sm:gap-3 sm:px-4 sm:py-2 dark:border-gray-800 dark:bg-gray-900">
       {/* Transport Controls */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-0.5 sm:gap-1">
         <button
           onClick={stop}
-          className="rounded p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="rounded p-2 hover:bg-gray-100 sm:p-1.5 dark:hover:bg-gray-800"
           title="Stop"
         >
           <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -32,7 +32,7 @@ export default function TransportBar() {
 
         <button
           onClick={isPlaying ? pause : play}
-          className="rounded p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="rounded p-2 hover:bg-gray-100 sm:p-1.5 dark:hover:bg-gray-800"
           title={isPlaying ? 'Pause' : 'Play'}
         >
           {isPlaying ? (
@@ -48,7 +48,7 @@ export default function TransportBar() {
 
         <button
           onClick={toggleRecord}
-          className={`rounded p-1.5 ${isRecording ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+          className={`rounded p-2 sm:p-1.5 ${isRecording ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
           title="Record"
         >
           <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -58,11 +58,11 @@ export default function TransportBar() {
       </div>
 
       {/* Position Display */}
-      <div className="rounded bg-gray-100 px-3 py-1 font-mono text-sm dark:bg-gray-800">
+      <div className="rounded bg-gray-100 px-2 py-1 font-mono text-sm sm:px-3 dark:bg-gray-800">
         {formatPosition(playheadPosition)}
       </div>
 
-      <div className="mx-2 h-6 w-px bg-gray-200 dark:bg-gray-700" />
+      <div className="mx-1 hidden h-6 w-px bg-gray-200 sm:mx-2 sm:block dark:bg-gray-700" />
 
       {/* BPM */}
       <div className="flex items-center gap-1.5">
@@ -73,16 +73,18 @@ export default function TransportBar() {
           max={300}
           value={bpm}
           onChange={(e) => setBpm(Number(e.target.value))}
-          className="w-16 rounded border border-gray-300 bg-white px-2 py-1 text-center text-sm dark:border-gray-700 dark:bg-gray-800"
+          className="w-14 rounded border border-gray-300 bg-white px-1.5 py-1 text-center text-sm sm:w-16 sm:px-2 dark:border-gray-700 dark:bg-gray-800"
         />
       </div>
 
-      <div className="mx-2 h-6 w-px bg-gray-200 dark:bg-gray-700" />
+      <div className="mx-1 hidden h-6 w-px bg-gray-200 sm:mx-2 sm:block dark:bg-gray-700" />
 
       {/* Toggles */}
-      <ToggleButton active={metronomeEnabled} onClick={() => setMetronomeEnabled(!metronomeEnabled)} label="Metro" />
-      <ToggleButton active={gridSnap} onClick={() => setGridSnap(!gridSnap)} label="Snap" />
-      <ToggleButton active={loopEnabled} onClick={() => setLoopEnabled(!loopEnabled)} label="Loop" />
+      <div className="flex items-center gap-0.5 sm:gap-1">
+        <ToggleButton active={metronomeEnabled} onClick={() => setMetronomeEnabled(!metronomeEnabled)} label="Metro" />
+        <ToggleButton active={gridSnap} onClick={() => setGridSnap(!gridSnap)} label="Snap" />
+        <ToggleButton active={loopEnabled} onClick={() => setLoopEnabled(!loopEnabled)} label="Loop" />
+      </div>
     </div>
   );
 }
@@ -91,7 +93,7 @@ function ToggleButton({ active, onClick, label }: { active: boolean; onClick: ()
   return (
     <button
       onClick={onClick}
-      className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+      className={`rounded px-2.5 py-1.5 text-xs font-medium transition-colors sm:py-1 ${
         active
           ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
           : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'

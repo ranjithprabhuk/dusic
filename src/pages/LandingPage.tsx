@@ -11,22 +11,22 @@ export default function LandingPage() {
 
       <Logo size={80} className="mb-4 drop-shadow-lg" />
 
-      <h1 className="text-7xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+      <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl lg:text-7xl dark:text-white">
         Dusic
       </h1>
 
-      <p className="mt-3 text-xl font-light text-gray-500 dark:text-gray-400">
+      <p className="mt-3 text-base font-light text-gray-500 sm:text-xl dark:text-gray-400">
         Your Digital Music Studio
       </p>
 
       <Link
         to="/workspace"
-        className="mt-10 rounded-xl bg-indigo-600 px-10 py-4 text-lg font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:bg-indigo-500 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-95"
+        className="mt-8 rounded-xl bg-indigo-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:bg-indigo-500 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-95 sm:mt-10 sm:px-10 sm:py-4 sm:text-lg"
       >
         Unleash Your Sound
       </Link>
 
-      <p className="mt-6 text-sm text-gray-400 dark:text-gray-600">
+      <p className="mt-6 px-4 text-center text-sm text-gray-400 dark:text-gray-600">
         Compose, mix, and produce music right in your browser
       </p>
     </div>

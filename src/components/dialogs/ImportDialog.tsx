@@ -62,8 +62,8 @@ export default function ImportDialog({ onClose }: ImportDialogProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose} role="dialog">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl dark:bg-gray-900" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose} role="dialog">
+      <div className="w-full max-w-md rounded-t-lg bg-white p-4 shadow-xl sm:rounded-lg sm:p-6 dark:bg-gray-900" onClick={(e) => e.stopPropagation()}>
         <h3 className="text-lg font-semibold">Import</h3>
         <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
           Import audio files (MP3, WAV, OGG, FLAC) or Dusic project files (.dusic.json).
@@ -86,7 +86,7 @@ export default function ImportDialog({ onClose }: ImportDialogProps) {
         </div>
         {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
         <div className="mt-4 flex justify-end">
-          <button onClick={onClose} className="rounded px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800">
+          <button onClick={onClose} className="rounded px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-100 sm:px-3 sm:py-1.5 dark:text-gray-400 dark:hover:bg-gray-800">
             Cancel
           </button>
         </div>

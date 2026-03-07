@@ -63,21 +63,21 @@ export default function TrackLane({
   return (
     <div className="flex border-b border-gray-200 dark:border-gray-800">
       {/* Track Controls */}
-      <div className="flex w-48 shrink-0 flex-col gap-1 border-r border-gray-200 bg-gray-50 px-3 py-2 dark:border-gray-800 dark:bg-gray-900/50">
-        <span className="text-sm font-medium truncate">{track.name}</span>
-        <div className="flex items-center gap-1">
+      <div className="flex w-28 shrink-0 flex-col gap-1 border-r border-gray-200 bg-gray-50 px-2 py-2 sm:w-48 sm:px-3 dark:border-gray-800 dark:bg-gray-900/50">
+        <span className="text-xs font-medium truncate sm:text-sm">{track.name}</span>
+        <div className="flex items-center gap-0.5 sm:gap-1">
           <input
             type="range"
             min={0}
             max={100}
             value={Math.round(track.volume * 100)}
             onChange={(e) => updateTrack(track.id, { volume: Number(e.target.value) / 100 })}
-            className="h-1 w-20 accent-indigo-600"
+            className="h-1 w-12 accent-indigo-600 sm:w-20"
             title={`Volume: ${Math.round(track.volume * 100)}%`}
           />
           <button
             onClick={() => updateTrack(track.id, { isMuted: !track.isMuted })}
-            className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
+            className={`rounded px-1.5 py-1 text-[10px] font-bold sm:py-0.5 ${
               track.isMuted
                 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
                 : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
@@ -87,7 +87,7 @@ export default function TrackLane({
           </button>
           <button
             onClick={() => updateTrack(track.id, { isSolo: !track.isSolo })}
-            className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
+            className={`rounded px-1.5 py-1 text-[10px] font-bold sm:py-0.5 ${
               track.isSolo
                 ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
                 : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'

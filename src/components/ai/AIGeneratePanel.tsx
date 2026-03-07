@@ -88,12 +88,12 @@ export default function AIGeneratePanel({ onClose }: AIGeneratePanelProps) {
 
       <div className="p-4">
         {/* Method tabs */}
-        <div className="mb-4 flex gap-1">
+        <div className="mb-4 flex flex-wrap gap-1">
           {([['text', 'Text Prompt'], ['selectors', 'Selectors'], ['trackSeed', 'Track Seed'], ['midiPattern', 'MIDI Pattern']] as const).map(([m, label]) => (
             <button
               key={m}
               onClick={() => setMethod(m)}
-              className={`rounded px-2.5 py-1 text-xs font-medium ${
+              className={`rounded px-2.5 py-1.5 text-xs font-medium sm:py-1 ${
                 method === m
                   ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
                   : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
@@ -116,7 +116,7 @@ export default function AIGeneratePanel({ onClose }: AIGeneratePanelProps) {
         )}
 
         {method === 'selectors' && (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <SelectField label="Genre" value={genre} options={GENRES} onChange={setGenre} />
             <SelectField label="Mood" value={mood} options={MOODS} onChange={setMood} />
             <SelectField label="Instrument" value={instrument}

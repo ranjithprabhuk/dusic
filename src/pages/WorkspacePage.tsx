@@ -44,16 +44,18 @@ export default function WorkspacePage() {
       <TransportBar />
       <InstrumentPanel />
 
-      <div className="flex flex-wrap items-center gap-1 border-b border-gray-200 bg-gray-50 px-4 py-1 dark:border-gray-800 dark:bg-gray-900/50">
-        <Toolbar selectedTrackId={selectedTrackId} selectedSegmentId={selectedSegmentId} />
+      <div className="flex flex-wrap items-center gap-1 border-b border-gray-200 bg-gray-50 px-2 py-1 sm:px-4 dark:border-gray-800 dark:bg-gray-900/50">
+        <div className="hidden sm:contents">
+          <Toolbar selectedTrackId={selectedTrackId} selectedSegmentId={selectedSegmentId} />
+        </div>
         <div className="flex-1" />
         <FileButton label="Save" onClick={() => setDialog('save')} />
         <FileButton label="Load" onClick={() => setDialog('load')} />
         <FileButton label="Import" onClick={() => setDialog('import')} />
         <FileButton label="Export" onClick={() => setDialog('export')} />
-        <div className="mx-1 h-5 w-px bg-gray-200 dark:bg-gray-700" />
-        <ToggleBtn active={showKeyboard} onClick={() => setShowKeyboard(!showKeyboard)} label="Keyboard" />
-        <ToggleBtn active={showEffects} onClick={() => setShowEffects(!showEffects)} label="Effects" />
+        <div className="mx-0.5 h-5 w-px bg-gray-200 sm:mx-1 dark:bg-gray-700" />
+        <ToggleBtn active={showKeyboard} onClick={() => setShowKeyboard(!showKeyboard)} label="Keys" smLabel="Keyboard" />
+        <ToggleBtn active={showEffects} onClick={() => setShowEffects(!showEffects)} label="FX" smLabel="Effects" />
         <ToggleBtn active={showAI} onClick={() => setShowAI(!showAI)} label="AI" />
       </div>
 
@@ -90,24 +92,26 @@ function FileButton({ label, onClick }: { label: string; onClick: () => void }) 
   return (
     <button
       onClick={onClick}
-      className="rounded px-2 py-0.5 text-xs font-medium text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800"
+      className="rounded px-2 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-200 sm:py-0.5 dark:text-gray-400 dark:hover:bg-gray-800"
     >
       {label}
     </button>
   );
 }
 
-function ToggleBtn({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+function ToggleBtn({ active, onClick, label, smLabel }: { active: boolean; onClick: () => void; label: string; smLabel?: string }) {
   return (
     <button
       onClick={onClick}
-      className={`rounded px-2 py-0.5 text-xs font-medium ${
+      className={`rounded px-2 py-1.5 text-xs font-medium sm:py-0.5 ${
         active
           ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
           : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
       }`}
     >
-      {label}
+      <span className="sm:hidden">{label}</span>
+      {smLabel && <span className="hidden sm:inline">{smLabel}</span>}
+      {!smLabel && <span className="hidden sm:inline">{label}</span>}
     </button>
   );
 }

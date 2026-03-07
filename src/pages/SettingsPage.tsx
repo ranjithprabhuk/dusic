@@ -2,8 +2,8 @@ import AISettingsForm from '../components/ai/AISettingsForm';
 
 export default function SettingsPage() {
   return (
-    <div className="mx-auto max-w-2xl p-6">
-      <h2 className="text-2xl font-bold">Settings</h2>
+    <div className="mx-auto max-w-2xl px-3 py-4 sm:p-6">
+      <h2 className="text-xl font-bold sm:text-2xl">Settings</h2>
       <p className="mt-2 text-gray-600 dark:text-gray-400">
         Configure AI music generation and app preferences.
       </p>

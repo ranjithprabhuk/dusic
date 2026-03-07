@@ -151,7 +151,7 @@ function ToolButton({
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+      className={`rounded px-2.5 py-1.5 text-xs font-medium transition-colors sm:py-1 ${
         disabled
           ? 'cursor-not-allowed text-gray-300 dark:text-gray-700'
           : danger

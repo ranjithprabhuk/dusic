@@ -54,34 +54,34 @@ export default function PracticeMode({ instrumentId, onBack }: PracticeModeProps
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-4 flex flex-col gap-2 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-xl font-bold">{instrument.name}</h3>
+          <h3 className="text-lg font-bold sm:text-xl">{instrument.name}</h3>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Press keys on your keyboard to play. {instrument.type === 'tonal' ? 'Hold for sustained notes.' : 'Tap for each stroke.'}
           </p>
         </div>
-        <button onClick={onBack} className="rounded px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800">
+        <button onClick={onBack} className="self-start rounded px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 sm:py-1.5 dark:text-gray-400 dark:hover:bg-gray-800">
           ← Back
         </button>
       </div>
 
       {lastNote && (
         <div className="mb-4 text-center">
-          <span className="text-4xl font-bold text-indigo-600 dark:text-indigo-400">{lastNote}</span>
+          <span className="text-3xl font-bold text-indigo-600 sm:text-4xl dark:text-indigo-400">{lastNote}</span>
         </div>
       )}
 
-      <div className="flex flex-col items-center gap-1.5">
+      <div className="flex flex-col items-center gap-1 overflow-x-auto sm:gap-1.5">
         {ROWS.map((row, ri) => (
-          <div key={ri} className="flex gap-1.5" style={{ marginLeft: ri * 20 }}>
+          <div key={ri} className="flex gap-1 sm:gap-1.5" style={{ marginLeft: ri * 14 }}>
             {row.map((key) => {
               const mapping = instrument.keyMappings[key];
               const isPressed = pressedKeys.has(key);
               return (
                 <div
                   key={key}
-                  className={`flex h-14 w-14 flex-col items-center justify-center rounded-lg border-2 text-sm transition-all ${
+                  className={`flex h-10 w-10 flex-col items-center justify-center rounded-lg border-2 text-xs transition-all sm:h-14 sm:w-14 sm:text-sm ${
                     isPressed
                       ? 'scale-95 border-indigo-500 bg-indigo-100 text-indigo-700 shadow-lg shadow-indigo-200 dark:bg-indigo-900/50 dark:text-indigo-300 dark:shadow-indigo-900/50'
                       : mapping
@@ -89,11 +89,11 @@ export default function PracticeMode({ instrumentId, onBack }: PracticeModeProps
                         : 'border-gray-200 bg-gray-50 text-gray-300 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-700'
                   }`}
                 >
-                  <span className="text-[10px] font-medium uppercase opacity-50">
+                  <span className="text-[8px] font-medium uppercase opacity-50 sm:text-[10px]">
                     {key === ';' ? ';' : key}
                   </span>
                   {mapping && (
-                    <span className="mt-0.5 font-bold leading-none">{mapping.label}</span>
+                    <span className="mt-0.5 font-bold leading-none truncate max-w-full px-0.5">{mapping.label}</span>
                   )}
                 </div>
               );

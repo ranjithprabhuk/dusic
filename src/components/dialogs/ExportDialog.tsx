@@ -48,8 +48,8 @@ export default function ExportDialog({ onClose }: ExportDialogProps) {
   }, [format, filename, name, bpm, tracks, onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose} role="dialog">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl dark:bg-gray-900" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose} role="dialog">
+      <div className="w-full max-w-md rounded-t-lg bg-white p-4 shadow-xl sm:rounded-lg sm:p-6 dark:bg-gray-900" onClick={(e) => e.stopPropagation()}>
         <h3 className="text-lg font-semibold">Export</h3>
         <div className="mt-4 space-y-3">
           <div>
@@ -63,12 +63,12 @@ export default function ExportDialog({ onClose }: ExportDialogProps) {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Format</label>
-            <div className="mt-1 flex gap-2">
+            <div className="mt-1 flex flex-wrap gap-2">
               {(['wav', 'mp3', 'project'] as const).map((f) => (
                 <button
                   key={f}
                   onClick={() => setFormat(f)}
-                  className={`rounded px-3 py-1.5 text-sm font-medium ${
+                  className={`rounded px-3 py-2 text-sm font-medium sm:py-1.5 ${
                     format === f
                       ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
                       : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
@@ -98,11 +98,11 @@ export default function ExportDialog({ onClose }: ExportDialogProps) {
         </div>
         {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
         <div className="mt-4 flex justify-end gap-2">
-          <button onClick={onClose} className="rounded px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800">
+          <button onClick={onClose} className="rounded px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-100 sm:px-3 sm:py-1.5 dark:text-gray-400 dark:hover:bg-gray-800">
             Cancel
           </button>
           <button onClick={handleExport} disabled={exporting || !filename.trim()}
-            className="rounded bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50">
+            className="rounded bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50 sm:px-3 sm:py-1.5">
             {exporting ? 'Exporting...' : 'Export'}
           </button>
         </div>

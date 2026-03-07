@@ -65,17 +65,17 @@ export default function Timeline({ selectedSegmentId, onSelectSegment }: Timelin
     <div className="flex flex-1 flex-col overflow-hidden">
       {/* Ruler */}
       <div className="flex border-b border-gray-200 dark:border-gray-800">
-        <div className="flex w-48 shrink-0 items-center gap-1 border-r border-gray-200 bg-gray-50 px-3 py-1 dark:border-gray-800 dark:bg-gray-900/50">
+        <div className="flex w-28 shrink-0 items-center gap-1 border-r border-gray-200 bg-gray-50 px-2 py-1 sm:w-48 sm:px-3 dark:border-gray-800 dark:bg-gray-900/50">
           <button
             onClick={() => addTrack()}
-            className="rounded bg-indigo-600 px-2 py-0.5 text-xs font-medium text-white hover:bg-indigo-500"
+            className="rounded bg-indigo-600 px-2 py-1 text-xs font-medium text-white hover:bg-indigo-500 sm:py-0.5"
           >
             + Track
           </button>
           <button
             onClick={() => setLoopEnabled(!loopEnabled)}
             title={loopEnabled ? 'Disable loop (Shift+drag ruler to set region)' : 'Enable loop (Shift+drag ruler to set region)'}
-            className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
+            className={`rounded px-1.5 py-1 text-[10px] font-bold sm:py-0.5 ${
               loopEnabled
                 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
                 : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'

@@ -163,15 +163,15 @@ export default function GuidedTutorial({ instrumentId }: GuidedTutorialProps) {
   const expectedMapping = expectedKey ? instrument.keyMappings[expectedKey] : undefined;
 
   return (
-    <div className="mt-6 rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-900">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="mt-6 rounded-lg border border-gray-200 bg-white p-3 sm:p-5 dark:border-gray-700 dark:bg-gray-900">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h4 className="font-semibold">Guided Tutorial</h4>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1 sm:gap-2">
           {sequences.map((seq, i) => (
             <button
               key={i}
               onClick={() => { setSeqIndex(i); setStepIndex(0); setFeedback(null); }}
-              className={`rounded px-2 py-0.5 text-xs font-medium ${
+              className={`rounded px-2 py-1 text-xs font-medium sm:py-0.5 ${
                 i === seqIndex
                   ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
                   : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
