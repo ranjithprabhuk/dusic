@@ -1,4 +1,5 @@
 import { audioEngine } from '../engine/AudioEngine';
+import { audioExportService } from './AudioExportService';
 import type { Segment } from '../types/composition';
 
 const SUPPORTED_TYPES = new Set([
@@ -18,17 +19,39 @@ class AudioImportService {
     const ctx = audioEngine.getContext();
     const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
 
+    return this.createSegmentFromBuffer(audioBuffer, bpm, 0);
+  }
+
+  /** Create a Segment from an AudioBuffer (used by mic recording and file import) */
+  async createSegmentFromBuffer(audioBuffer: AudioBuffer, bpm: number, startBeat: number): Promise<Segment> {
     const waveformData = this.extractWaveform(audioBuffer, 200);
     const durationSeconds = audioBuffer.duration;
     const durationBeats = (durationSeconds / 60) * bpm;
 
+    // Convert AudioBuffer to WAV blob then to base64
+    const wavBlob = audioExportService.exportWav(audioBuffer);
+    const arrayBuf = await wavBlob.arrayBuffer();
+    const audioBase64 = this.arrayBufferToBase64(arrayBuf);
+
     return {
       id: `seg-${Date.now()}`,
       type: 'audio',
-      startBeat: 0,
+      startBeat,
       durationBeats,
+      audioBuffer: audioBase64,
       waveformData,
     };
+  }
+
+  /** Decode a base64 WAV string back to AudioBuffer */
+  async decodeBase64Audio(base64: string): Promise<AudioBuffer> {
+    const binaryStr = atob(base64);
+    const bytes = new Uint8Array(binaryStr.length);
+    for (let i = 0; i < binaryStr.length; i++) {
+      bytes[i] = binaryStr.charCodeAt(i);
+    }
+    const ctx = audioEngine.getContext();
+    return ctx.decodeAudioData(bytes.buffer);
   }
 
   private isSupported(file: File): boolean {
@@ -37,7 +60,7 @@ class AudioImportService {
     return SUPPORTED_EXTENSIONS.has(ext);
   }
 
-  private extractWaveform(buffer: AudioBuffer, numSamples: number): number[] {
+  extractWaveform(buffer: AudioBuffer, numSamples: number): number[] {
     const data = buffer.getChannelData(0);
     const step = Math.floor(data.length / numSamples);
     const waveform: number[] = [];
@@ -51,6 +74,15 @@ class AudioImportService {
       waveform.push(max);
     }
     return waveform;
+  }
+
+  arrayBufferToBase64(buffer: ArrayBuffer): string {
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
   }
 }
 

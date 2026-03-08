@@ -19,7 +19,7 @@ const features = [
       </svg>
     ),
     title: 'Learn Any Instrument',
-    desc: '80 structured lessons across 5 instruments. From beginner scales to expert performances.',
+    desc: '128 structured lessons across 8 instruments. From beginner scales to expert performances.',
   },
   {
     icon: (
@@ -47,6 +47,9 @@ const instruments = [
   { name: 'Synthesizer', img: '/dusic/images/instruments/synthesizer.svg' },
   { name: 'Tabla', img: '/dusic/images/instruments/tabla.svg' },
   { name: 'Dholak', img: '/dusic/images/instruments/dholak.svg' },
+  { name: 'Bass', img: '/dusic/images/instruments/bass.svg' },
+  { name: 'Flute', img: '/dusic/images/instruments/flute.svg' },
+  { name: 'Organ', img: '/dusic/images/instruments/organ.svg' },
 ];
 
 export default function LandingPage() {

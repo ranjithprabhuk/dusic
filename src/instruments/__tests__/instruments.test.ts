@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { instruments, getInstrument, getSampleUrls } from '../index';
 
 describe('instruments', () => {
-  it('has 5 instruments registered', () => {
-    expect(instruments).toHaveLength(5);
+  it('has 8 instruments registered', () => {
+    expect(instruments).toHaveLength(8);
   });
 
   it('each instrument has 12+ key mappings', () => {

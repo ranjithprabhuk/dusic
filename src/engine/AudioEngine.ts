@@ -97,7 +97,7 @@ class AudioEngine {
 
     const update = () => {
       const transport = useTransportStore.getState();
-      if (!transport.isPlaying) return;
+      if (!transport.isPlaying && !transport.isMicRecording) return;
 
       const ctx = this.getContext();
       const elapsed = ctx.currentTime - this.playbackStartTime;
@@ -124,7 +124,7 @@ class AudioEngine {
       } else {
         // Auto-stop at end of composition (skip while recording)
         const endBeat = this.computeEndBeat();
-        if (!transport.isRecording && endBeat > 0 && currentBeat >= endBeat) {
+        if (!transport.isRecording && !transport.isMicRecording && endBeat > 0 && currentBeat >= endBeat) {
           transport.setPlayheadPosition(endBeat);
           transport.stop();
           this.stopPlayheadUpdate();

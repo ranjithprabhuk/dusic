@@ -4,6 +4,9 @@ import { guitar } from './guitar';
 import { synthesizer } from './synthesizer';
 import { dholak } from './dholak';
 import { tabla } from './tabla';
+import { bass } from './bass';
+import { flute } from './flute';
+import { organ } from './organ';
 
 export const instruments: InstrumentConfig[] = [
   piano,
@@ -11,6 +14,9 @@ export const instruments: InstrumentConfig[] = [
   synthesizer,
   dholak,
   tabla,
+  bass,
+  flute,
+  organ,
 ];
 
 export const instrumentMap = new Map<string, InstrumentConfig>(

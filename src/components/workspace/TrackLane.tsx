@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react';
 import { useCompositionStore } from '../../store/useCompositionStore';
 import type { Track } from '../../types/composition';
 
@@ -97,12 +98,54 @@ export default function TrackLane({
               width: Math.max(seg.durationBeats * pixelsPerBeat, 4),
             }}
           >
-            <div className="truncate px-1.5 py-0.5 text-[10px] font-medium text-gray-700 dark:text-gray-300">
-              {seg.type === 'notes' ? `${seg.notes?.length ?? 0} notes` : 'Audio'}
-            </div>
+            {seg.type === 'audio' && seg.waveformData ? (
+              <MiniWaveform waveformData={seg.waveformData} />
+            ) : (
+              <div className="truncate px-1.5 py-0.5 text-[10px] font-medium text-gray-700 dark:text-gray-300">
+                {seg.type === 'notes' ? `${seg.notes?.length ?? 0} notes` : 'Audio'}
+              </div>
+            )}
           </div>
         ))}
       </div>
     </div>
+  );
+}
+
+function MiniWaveform({ waveformData }: { waveformData: number[] }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || waveformData.length === 0) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.offsetWidth;
+    const h = canvas.offsetHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = 'rgba(99, 102, 241, 0.6)';
+
+    const barWidth = w / waveformData.length;
+    const mid = h / 2;
+
+    for (let i = 0; i < waveformData.length; i++) {
+      const amplitude = waveformData[i] * mid;
+      ctx.fillRect(i * barWidth, mid - amplitude, Math.max(barWidth - 0.5, 0.5), amplitude * 2);
+    }
+  }, [waveformData]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="h-full w-full"
+      style={{ display: 'block' }}
+    />
   );
 }

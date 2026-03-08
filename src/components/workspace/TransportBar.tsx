@@ -4,6 +4,8 @@ import { audioEngine } from '../../engine/AudioEngine';
 import { playbackEngine } from '../../engine/PlaybackEngine';
 import { instrumentEngine } from '../../engine/InstrumentEngine';
 import { metronome } from '../../engine/Metronome';
+import { micEngine } from '../../engine/MicEngine';
+import { audioImportService } from '../../services/AudioImportService';
 
 // Auto-stop: when AudioEngine detects end of composition, clean up playback
 audioEngine.onAutoStop = () => {
@@ -65,15 +67,73 @@ async function handleRecord() {
 
 function handleStop() {
   const transport = useTransportStore.getState();
+  if (transport.isMicRecording) {
+    micEngine.stopRecording(); // discard recording on stop
+  }
   transport.stop();
   playbackEngine.stop();
   metronome.stop();
   audioEngine.stopPlayheadUpdate();
 }
 
-export default function TransportBar() {
+// Stored when mic recording starts so we know where to place the segment
+let micRecordStartBeat = 0;
+
+async function handleMicRecord(targetTrackId?: string) {
+  const transport = useTransportStore.getState();
+  await audioEngine.ensureResumed();
+
+  if (transport.isMicRecording) {
+    // --- Stop mic recording ---
+    const audioBuffer = await micEngine.stopRecording();
+    transport.toggleMicRecord();
+
+    // Stop the playhead animation that was tracking recording time
+    audioEngine.stopPlayheadUpdate();
+    transport.pause();
+
+    if (audioBuffer) {
+      const { bpm, tracks, addSegment } = useCompositionStore.getState();
+      const segment = await audioImportService.createSegmentFromBuffer(audioBuffer, bpm, micRecordStartBeat);
+
+      // Place on selected track, or fall back to first track
+      const target = tracks.find((t) => t.id === targetTrackId) ?? tracks[0];
+      if (target) {
+        addSegment(target.id, segment);
+      }
+    }
+  } else {
+    // --- Start mic recording ---
+    const granted = await micEngine.requestPermission();
+    if (!granted) {
+      alert(micEngine.getErrorMessage());
+      return;
+    }
+
+    const started = micEngine.startRecording();
+    if (!started) {
+      alert('Failed to start microphone recording.');
+      return;
+    }
+
+    // Capture playhead position NOW (before it moves)
+    micRecordStartBeat = transport.playheadPosition;
+
+    transport.toggleMicRecord();
+
+    // Only advance the playhead so the user sees time passing, but do NOT
+    // play existing tracks — the user just wants to record their voice.
+    audioEngine.startPlayheadAnimation();
+  }
+}
+
+interface TransportBarProps {
+  selectedTrackId?: string;
+}
+
+export default function TransportBar({ selectedTrackId }: TransportBarProps) {
   const {
-    isPlaying, isRecording, metronomeEnabled, gridSnap, loopEnabled,
+    isPlaying, isRecording, isMicRecording, metronomeEnabled, gridSnap, loopEnabled,
     setMetronomeEnabled, setGridSnap, setLoopEnabled,
     playheadPosition,
   } = useTransportStore();
@@ -122,10 +182,23 @@ export default function TransportBar() {
           onClick={handleRecord}
           disabled={!hasTracks}
           className={`rounded p-2 sm:p-1.5 ${!hasTracks ? 'cursor-not-allowed opacity-30' : isRecording ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-          title="Record"
+          title="Record (Keyboard)"
         >
           <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <circle cx="10" cy="10" r="6" />
+          </svg>
+        </button>
+
+        <button
+          onClick={() => handleMicRecord(selectedTrackId)}
+          disabled={!hasTracks}
+          className={`rounded p-2 sm:p-1.5 ${!hasTracks ? 'cursor-not-allowed opacity-30' : isMicRecording ? 'animate-pulse bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+          title={isMicRecording ? 'Stop Mic Recording' : 'Record from Microphone'}
+        >
+          <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 12a3 3 0 003-3V5a3 3 0 00-6 0v4a3 3 0 003 3z" />
+            <path d="M5 9a1 1 0 00-2 0 7 7 0 0014 0 1 1 0 10-2 0 5 5 0 01-10 0z" />
+            <path d="M9 15.93V18H7a1 1 0 100 2h6a1 1 0 100-2h-2v-2.07A7.001 7.001 0 0017 9a1 1 0 10-2 0 5 5 0 01-10 0 1 1 0 00-2 0 7.001 7.001 0 006 6.93z" />
           </svg>
         </button>
       </div>

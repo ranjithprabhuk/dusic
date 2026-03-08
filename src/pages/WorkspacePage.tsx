@@ -44,7 +44,7 @@ export default function WorkspacePage() {
 
   return (
     <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden">
-      <TransportBar />
+      <TransportBar selectedTrackId={activeTrackId} />
       <InstrumentPanel />
 
       <div className="flex flex-wrap items-center gap-1 border-b border-gray-200 bg-gray-50 px-2 py-1 sm:px-4 dark:border-gray-800 dark:bg-gray-900/50">

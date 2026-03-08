@@ -1,0 +1,30 @@
+import type { InstrumentConfig } from '../types/instrument';
+
+export const flute: InstrumentConfig = {
+  id: 'flute',
+  name: 'Flute',
+  type: 'tonal',
+  icon: 'flute',
+  keyMappings: {
+    a: { key: 'a', label: 'C5', pitch: 72, frequency: 523.25, oscillatorType: 'triangle' },
+    s: { key: 's', label: 'D5', pitch: 74, frequency: 587.33, oscillatorType: 'triangle' },
+    d: { key: 'd', label: 'E5', pitch: 76, frequency: 659.25, oscillatorType: 'triangle' },
+    f: { key: 'f', label: 'F5', pitch: 77, frequency: 698.46, oscillatorType: 'triangle' },
+    g: { key: 'g', label: 'G5', pitch: 79, frequency: 783.99, oscillatorType: 'triangle' },
+    h: { key: 'h', label: 'A5', pitch: 81, frequency: 880.0, oscillatorType: 'triangle' },
+    j: { key: 'j', label: 'B5', pitch: 83, frequency: 987.77, oscillatorType: 'triangle' },
+    k: { key: 'k', label: 'C6', pitch: 84, frequency: 1046.5, oscillatorType: 'triangle' },
+    l: { key: 'l', label: 'D6', pitch: 86, frequency: 1174.66, oscillatorType: 'triangle' },
+    ';': { key: ';', label: 'E6', pitch: 88, frequency: 1318.51, oscillatorType: 'triangle' },
+    q: { key: 'q', label: 'F6', pitch: 89, frequency: 1396.91, oscillatorType: 'triangle' },
+    w: { key: 'w', label: 'G6', pitch: 91, frequency: 1567.98, oscillatorType: 'triangle' },
+    e: { key: 'e', label: 'A6', pitch: 93, frequency: 1760.0, oscillatorType: 'triangle' },
+    r: { key: 'r', label: 'B6', pitch: 95, frequency: 1975.53, oscillatorType: 'triangle' },
+    t: { key: 't', label: 'C7', pitch: 96, frequency: 2093.0, oscillatorType: 'triangle' },
+    y: { key: 'y', label: 'D7', pitch: 98, frequency: 2349.32, oscillatorType: 'triangle' },
+    u: { key: 'u', label: 'E7', pitch: 100, frequency: 2637.02, oscillatorType: 'triangle' },
+    i: { key: 'i', label: 'F7', pitch: 101, frequency: 2793.83, oscillatorType: 'triangle' },
+    o: { key: 'o', label: 'G7', pitch: 103, frequency: 3135.96, oscillatorType: 'triangle' },
+    p: { key: 'p', label: 'A7', pitch: 105, frequency: 3520.0, oscillatorType: 'triangle' },
+  },
+};

@@ -25,6 +25,8 @@ class PlaybackEngine {
   private lastScheduledBeat = 0;
   private activeNodes: { node: AudioScheduledSourceNode; stopTime: number }[] = [];
   private lookAheadSeconds = 0.15;
+  private scheduledAudioSegments = new Set<string>();
+  private decodedAudioBuffers = new Map<string, AudioBuffer>();
 
   /** Build a pitch -> NoteMapping lookup for an instrument */
   private getPitchMap(instrument: InstrumentConfig): Map<number, NoteMapping> {
@@ -44,7 +46,9 @@ class PlaybackEngine {
     this.playbackStartBeat = startBeat;
     // Start scheduling slightly before startBeat to catch notes right at the start
     this.lastScheduledBeat = startBeat - 0.001;
+    this.scheduledAudioSegments.clear();
 
+    this.prepareAudioSegments();
     this.scheduleAhead();
     this.intervalId = setInterval(() => this.scheduleAhead(), 25);
   }
@@ -66,6 +70,7 @@ class PlaybackEngine {
       }
     }
     this.activeNodes = [];
+    this.scheduledAudioSegments.clear();
   }
 
   /** Called when the playhead loops back to loopStart */
@@ -74,6 +79,7 @@ class PlaybackEngine {
     this.playbackStartTime = ctx.currentTime;
     this.playbackStartBeat = loopStartBeat;
     this.lastScheduledBeat = loopStartBeat;
+    this.scheduledAudioSegments.clear();
   }
 
   private scheduleAhead(): void {
@@ -101,6 +107,12 @@ class PlaybackEngine {
       const pitchMap = this.getPitchMap(instrument);
 
       for (const seg of track.segments) {
+        // Handle audio segments
+        if (seg.type === 'audio' && seg.audioBuffer) {
+          this.scheduleAudioSegment(ctx, seg.id, seg.audioBuffer, seg.startBeat, seg.durationBeats, bpm, track.volume, currentBeat);
+          continue;
+        }
+
         if (seg.type !== 'notes' || !seg.notes) continue;
 
         for (const note of seg.notes) {
@@ -187,6 +199,77 @@ class PlaybackEngine {
         this.activeNodes.push({ node: source, stopTime });
       }
     }
+  }
+  /** Pre-decode audio segments so they're ready for scheduling */
+  private prepareAudioSegments(): void {
+    const { tracks } = useCompositionStore.getState();
+    for (const track of tracks) {
+      for (const seg of track.segments) {
+        if (seg.type === 'audio' && seg.audioBuffer && !this.decodedAudioBuffers.has(seg.id)) {
+          // Decode in background — will be available by the time we need it
+          const binaryStr = atob(seg.audioBuffer);
+          const bytes = new Uint8Array(binaryStr.length);
+          for (let i = 0; i < binaryStr.length; i++) {
+            bytes[i] = binaryStr.charCodeAt(i);
+          }
+          const ctx = audioEngine.getContext();
+          ctx.decodeAudioData(bytes.buffer.slice(0)).then((decoded) => {
+            this.decodedAudioBuffers.set(seg.id, decoded);
+          }).catch(() => {
+            // Ignore decode failures
+          });
+        }
+      }
+    }
+  }
+
+  /** Schedule an audio segment for playback */
+  private scheduleAudioSegment(
+    ctx: AudioContext,
+    segId: string,
+    _audioBase64: string,
+    startBeat: number,
+    durationBeats: number,
+    bpm: number,
+    trackVolume: number,
+    currentBeat: number,
+  ): void {
+    if (this.scheduledAudioSegments.has(segId)) return;
+
+    const segEndBeat = startBeat + durationBeats;
+    if (segEndBeat <= currentBeat) return; // Already past
+
+    const decoded = this.decodedAudioBuffers.get(segId);
+    if (!decoded) return; // Not yet decoded
+
+    this.scheduledAudioSegments.add(segId);
+
+    const source = ctx.createBufferSource();
+    source.buffer = decoded;
+
+    const gain = ctx.createGain();
+    gain.gain.value = trackVolume;
+
+    source.connect(gain);
+    gain.connect(audioEngine.getMasterOutput());
+
+    const segStartTime = this.playbackStartTime + beatsToSeconds(startBeat - this.playbackStartBeat, bpm);
+
+    if (segStartTime >= ctx.currentTime) {
+      // Segment starts in the future
+      source.start(segStartTime);
+    } else {
+      // Segment already started — play from offset
+      const offsetSeconds = ctx.currentTime - segStartTime;
+      if (offsetSeconds < decoded.duration) {
+        source.start(0, offsetSeconds);
+      } else {
+        return; // Segment already finished
+      }
+    }
+
+    const stopTime = segStartTime + decoded.duration;
+    this.activeNodes.push({ node: source, stopTime });
   }
 }
 

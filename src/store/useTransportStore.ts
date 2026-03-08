@@ -3,6 +3,7 @@ import { create } from 'zustand';
 interface TransportState {
   isPlaying: boolean;
   isRecording: boolean;
+  isMicRecording: boolean;
   playheadPosition: number;
   loopEnabled: boolean;
   loopStart: number;
@@ -14,6 +15,7 @@ interface TransportState {
   pause: () => void;
   stop: () => void;
   toggleRecord: () => void;
+  toggleMicRecord: () => void;
   seek: (position: number) => void;
   setLoopEnabled: (enabled: boolean) => void;
   setLoopRegion: (start: number, end: number) => void;
@@ -25,6 +27,7 @@ interface TransportState {
 export const useTransportStore = create<TransportState>((set) => ({
   isPlaying: false,
   isRecording: false,
+  isMicRecording: false,
   playheadPosition: 0,
   loopEnabled: false,
   loopStart: 0,
@@ -34,11 +37,17 @@ export const useTransportStore = create<TransportState>((set) => ({
 
   play: () => set({ isPlaying: true }),
   pause: () => set({ isPlaying: false }),
-  stop: () => set({ isPlaying: false, isRecording: false, playheadPosition: 0 }),
+  stop: () => set({ isPlaying: false, isRecording: false, isMicRecording: false, playheadPosition: 0 }),
   toggleRecord: () =>
     set((state) => ({
       isRecording: !state.isRecording,
+      isMicRecording: !state.isRecording ? false : state.isMicRecording,
       isPlaying: !state.isRecording ? true : state.isPlaying,
+    })),
+  toggleMicRecord: () =>
+    set((state) => ({
+      isMicRecording: !state.isMicRecording,
+      isRecording: !state.isMicRecording ? false : state.isRecording,
     })),
   seek: (position) => set({ playheadPosition: Math.max(0, position) }),
   setLoopEnabled: (loopEnabled) => set({ loopEnabled }),

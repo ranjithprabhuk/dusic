@@ -111,6 +111,21 @@ export async function renderOffline(options: RenderOptions): Promise<AudioBuffer
     applyEffectsToNode(ctx, trackGain, track.effects, ctx.destination);
 
     for (const seg of track.segments) {
+      // Handle audio segments
+      if (seg.type === 'audio' && seg.audioBuffer) {
+        try {
+          const decoded = await decodeBase64ForOffline(seg.audioBuffer, sampleRate);
+          const startTime = beatsToSeconds(seg.startBeat, bpm);
+          const source = ctx.createBufferSource();
+          source.buffer = decoded;
+          source.connect(trackGain);
+          source.start(startTime);
+        } catch {
+          // Skip segments that fail to decode
+        }
+        continue;
+      }
+
       if (seg.type !== 'notes' || !seg.notes) continue;
 
       for (const note of seg.notes) {
@@ -127,6 +142,16 @@ export async function renderOffline(options: RenderOptions): Promise<AudioBuffer
   onProgress?.(1);
 
   return buffer;
+}
+
+async function decodeBase64ForOffline(base64: string, sampleRate: number): Promise<AudioBuffer> {
+  const binaryStr = atob(base64);
+  const bytes = new Uint8Array(binaryStr.length);
+  for (let i = 0; i < binaryStr.length; i++) {
+    bytes[i] = binaryStr.charCodeAt(i);
+  }
+  const tmpCtx = new OfflineAudioContext(1, 1, sampleRate);
+  return tmpCtx.decodeAudioData(bytes.buffer.slice(0));
 }
 
 function scheduleNote(

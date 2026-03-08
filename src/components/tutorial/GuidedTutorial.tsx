@@ -30,6 +30,21 @@ const tutorials: Record<string, TutorialSequence[]> = {
     { name: 'Teen Taal', keys: ['g', 'h', 'a', 's', 'a', 's', 'd', 'f', 'a', 's', 'd', 'f', 'g', 'h', 'a', 's'] },
     { name: 'Na-Tin Pattern', keys: ['a', 's', 'a', 's', 'a', 'a', 's', 's'] },
   ],
+  bass: [
+    { name: 'Low E Walk', keys: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k'] },
+    { name: 'Root-Fifth Pulse', keys: ['a', 'g', 'a', 'g', 'a', 'g', 'a', 'g'] },
+    { name: 'Octave Bounce', keys: ['a', 'k', 'a', 'k', 's', 'l', 's', 'l'] },
+  ],
+  flute: [
+    { name: 'C Major Scale (Up)', keys: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k'] },
+    { name: 'Birdsong Melody', keys: ['g', 'h', 'g', 'd', 'g', 'h', 'g', 'd'] },
+    { name: 'Step and Leap', keys: ['a', 's', 'f', 'd', 's', 'a', 'f', 'g'] },
+  ],
+  organ: [
+    { name: 'C Major Scale (Up)', keys: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k'] },
+    { name: 'Sustained Chords', keys: ['a', 'd', 'g', 'a', 'f', 'h', 'k', 'a'] },
+    { name: 'Hymn Pattern', keys: ['a', 'a', 'f', 'f', 'g', 'g', 'a', 'a'] },
+  ],
 };
 
 interface GuidedTutorialProps {

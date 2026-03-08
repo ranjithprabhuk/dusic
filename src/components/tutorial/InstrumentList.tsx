@@ -6,6 +6,9 @@ const descriptions: Record<string, string> = {
   synthesizer: 'Dual-wave synth — square (lower) and triangle (upper) oscillators.',
   dholak: 'Traditional Indian two-headed drum. 12 distinct strokes.',
   tabla: 'Indian percussion pair. Right drum (dayan) and left drum (bayan) sounds.',
+  bass: 'Deep bass from E1-C4. Warm sine wave for groovy basslines.',
+  flute: 'Airy flute from C5-A7. Triangle wave for high-register melodies.',
+  organ: 'Hammond-style organ from C3-A5. Rich square wave sustained tones.',
 };
 
 // Twemoji (MIT licensed) instrument images in public/images/instruments/
@@ -15,6 +18,9 @@ const instrumentImages: Record<string, string> = {
   synthesizer: '/dusic/images/instruments/synthesizer.svg',
   dholak: '/dusic/images/instruments/dholak.svg',
   tabla: '/dusic/images/instruments/tabla.svg',
+  bass: '/dusic/images/instruments/bass.svg',
+  flute: '/dusic/images/instruments/flute.svg',
+  organ: '/dusic/images/instruments/organ.svg',
 };
 
 const gradients: Record<string, string> = {
@@ -23,6 +29,9 @@ const gradients: Record<string, string> = {
   synthesizer: 'from-violet-500/20 to-fuchsia-500/20 dark:from-violet-500/10 dark:to-fuchsia-500/10',
   dholak: 'from-orange-500/20 to-red-500/20 dark:from-orange-500/10 dark:to-red-500/10',
   tabla: 'from-teal-500/20 to-emerald-500/20 dark:from-teal-500/10 dark:to-emerald-500/10',
+  bass: 'from-blue-500/20 to-cyan-500/20 dark:from-blue-500/10 dark:to-cyan-500/10',
+  flute: 'from-sky-500/20 to-blue-500/20 dark:from-sky-500/10 dark:to-blue-500/10',
+  organ: 'from-purple-500/20 to-rose-500/20 dark:from-purple-500/10 dark:to-rose-500/10',
 };
 
 const accentColors: Record<string, string> = {
@@ -31,6 +40,9 @@ const accentColors: Record<string, string> = {
   synthesizer: 'text-violet-600 dark:text-violet-400',
   dholak: 'text-orange-600 dark:text-orange-400',
   tabla: 'text-teal-600 dark:text-teal-400',
+  bass: 'text-blue-600 dark:text-blue-400',
+  flute: 'text-sky-600 dark:text-sky-400',
+  organ: 'text-purple-600 dark:text-purple-400',
 };
 
 const borderHover: Record<string, string> = {
@@ -39,6 +51,9 @@ const borderHover: Record<string, string> = {
   synthesizer: 'hover:border-violet-400 dark:hover:border-violet-600',
   dholak: 'hover:border-orange-400 dark:hover:border-orange-600',
   tabla: 'hover:border-teal-400 dark:hover:border-teal-600',
+  bass: 'hover:border-blue-400 dark:hover:border-blue-600',
+  flute: 'hover:border-sky-400 dark:hover:border-sky-600',
+  organ: 'hover:border-purple-400 dark:hover:border-purple-600',
 };
 
 interface InstrumentListProps {
