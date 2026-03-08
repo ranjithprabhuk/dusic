@@ -41,7 +41,7 @@ export const useTutorialStore = create<TutorialState>((set, get) => ({
     set({ progress: updated });
   },
 
-  isLessonUnlocked: (lessonId, prevLessonId) => {
+  isLessonUnlocked: (_lessonId, prevLessonId) => {
     if (!prevLessonId) return true; // first lesson is always unlocked
     const prev = get().progress[prevLessonId];
     return prev?.completed ?? false;
