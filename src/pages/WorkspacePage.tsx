@@ -21,11 +21,12 @@ type Dialog = 'save' | 'load' | 'export' | 'import' | null;
 
 export default function WorkspacePage() {
   const { tracks } = useCompositionStore();
-  useKeyboardMapping();
+  const [selectedTrackId, setSelectedTrackId] = useState<string>();
+  const activeTrackId = selectedTrackId ?? tracks[0]?.id;
+  useKeyboardMapping(activeTrackId);
   usePlayback();
   useUndoRedo();
   useBeforeUnload();
-  const [selectedTrackId, setSelectedTrackId] = useState<string>();
   const [selectedSegmentId, setSelectedSegmentId] = useState<string>();
   const [showKeyboard, setShowKeyboard] = useState(true);
   const [showEffects, setShowEffects] = useState(false);
@@ -63,7 +64,9 @@ export default function WorkspacePage() {
 
       <Timeline
         selectedSegmentId={selectedSegmentId}
+        selectedTrackId={activeTrackId}
         onSelectSegment={handleSelectSegment}
+        onSelectTrack={(trackId) => setSelectedTrackId(trackId)}
       />
 
       {showPianoRoll && selectedTrackId && selectedSegment && (

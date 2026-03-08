@@ -17,9 +17,12 @@ function shouldIgnoreFocus(): boolean {
   return false;
 }
 
-export function useKeyboardMapping() {
+export function useKeyboardMapping(activeTrackId?: string) {
   const heldKeys = useRef(new Set<string>());
   const noteStartBeats = useRef(new Map<string, number>());
+
+  const activeTrackIdRef = useRef(activeTrackId);
+  activeTrackIdRef.current = activeTrackId;
 
   useEffect(() => {
     const handleKeyDown = async (e: KeyboardEvent) => {
@@ -80,10 +83,14 @@ export function useKeyboardMapping() {
           velocity: 100,
         };
 
-        // Add to the active track's first segment (or create one)
+        // Add to the selected track (or first track as fallback)
         const composition = useCompositionStore.getState();
-        const activeTrack = composition.tracks[0]; // default to first track
+        const activeTrack = composition.tracks.find((t) => t.id === activeTrackIdRef.current) ?? composition.tracks[0];
         if (activeTrack) {
+          // Sync track instrument with what's being recorded
+          if (activeTrack.instrumentId !== selectedInstrumentId) {
+            composition.updateTrack(activeTrack.id, { instrumentId: selectedInstrumentId });
+          }
           const seg = activeTrack.segments[activeTrack.segments.length - 1];
           if (seg && seg.type === 'notes') {
             composition.updateSegment(activeTrack.id, seg.id, {

@@ -6,8 +6,10 @@ interface TrackLaneProps {
   pixelsPerBeat: number;
   totalBeats: number;
   onSelectSegment?: (trackId: string, segmentId: string) => void;
+  onSelectTrack?: (trackId: string) => void;
   onSegmentDragStart?: (trackId: string, segmentId: string, startBeat: number, e: React.MouseEvent) => void;
   selectedSegmentId?: string;
+  isSelected?: boolean;
   dropHighlight?: boolean;
 }
 
@@ -16,8 +18,10 @@ export default function TrackLane({
   pixelsPerBeat,
   totalBeats,
   onSelectSegment,
+  onSelectTrack,
   onSegmentDragStart,
   selectedSegmentId,
+  isSelected,
   dropHighlight,
 }: TrackLaneProps) {
   const { updateTrack } = useCompositionStore();
@@ -25,7 +29,14 @@ export default function TrackLane({
   return (
     <div className={`flex border-b border-gray-200 dark:border-gray-800 ${dropHighlight ? 'bg-indigo-50 dark:bg-indigo-900/20' : ''}`}>
       {/* Track Controls */}
-      <div className="flex w-28 shrink-0 flex-col gap-1 border-r border-gray-200 bg-gray-50 px-2 py-2 sm:w-48 sm:px-3 dark:border-gray-800 dark:bg-gray-900/50">
+      <div
+        className={`flex w-28 shrink-0 cursor-pointer flex-col gap-1 border-r px-2 py-2 sm:w-48 sm:px-3 ${
+          isSelected
+            ? 'border-indigo-300 bg-indigo-50 dark:border-indigo-700 dark:bg-indigo-950/40'
+            : 'border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900/50'
+        }`}
+        onClick={() => onSelectTrack?.(track.id)}
+      >
         <span className="text-xs font-medium truncate sm:text-sm">{track.name}</span>
         <div className="flex items-center gap-0.5 sm:gap-1">
           <input

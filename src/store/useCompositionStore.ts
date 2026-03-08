@@ -31,12 +31,23 @@ interface CompositionState {
   loadComposition: (state: { name: string; bpm: number; tracks: Track[] }) => void;
 }
 
-let trackCounter = 0;
+let trackCounter = 1;
+
+const defaultTrack: Track = {
+  id: `track-default-1`,
+  name: 'Track 1',
+  instrumentId: 'piano',
+  segments: [],
+  volume: 0.8,
+  isMuted: false,
+  isSolo: false,
+  effects: { ...DEFAULT_EFFECTS },
+};
 
 export const useCompositionStore = create<CompositionState>((set) => ({
   name: 'Untitled',
   bpm: 120,
-  tracks: [],
+  tracks: [defaultTrack],
   isDirty: false,
 
   setName: (name) => set({ name, isDirty: true }),

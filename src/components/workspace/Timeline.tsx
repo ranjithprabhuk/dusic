@@ -9,10 +9,12 @@ const TRACK_HEIGHT = 64; // h-16 = 4rem = 64px
 
 interface TimelineProps {
   selectedSegmentId?: string;
+  selectedTrackId?: string;
   onSelectSegment?: (trackId: string, segmentId: string) => void;
+  onSelectTrack?: (trackId: string) => void;
 }
 
-export default function Timeline({ selectedSegmentId, onSelectSegment }: TimelineProps) {
+export default function Timeline({ selectedSegmentId, selectedTrackId, onSelectSegment, onSelectTrack }: TimelineProps) {
   const { tracks, bpm, addTrack, updateSegment, moveSegment } = useCompositionStore();
   const { playheadPosition, seek, loopEnabled, loopStart, loopEnd, setLoopEnabled, setLoopRegion } = useTransportStore();
   const rulerRef = useRef<HTMLDivElement>(null);
@@ -246,7 +248,9 @@ export default function Timeline({ selectedSegmentId, onSelectSegment }: Timelin
                 pixelsPerBeat={PIXELS_PER_BEAT}
                 totalBeats={TOTAL_BEATS}
                 selectedSegmentId={selectedSegmentId}
+                isSelected={selectedTrackId === track.id}
                 onSelectSegment={onSelectSegment}
+                onSelectTrack={onSelectTrack}
                 onSegmentDragStart={handleSegmentDragStart}
                 dropHighlight={dropTargetTrackId === track.id}
               />
