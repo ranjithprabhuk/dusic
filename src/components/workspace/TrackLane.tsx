@@ -30,10 +30,10 @@ export default function TrackLane({
     <div className={`flex border-b border-gray-200 dark:border-gray-800 ${dropHighlight ? 'bg-indigo-50 dark:bg-indigo-900/20' : ''}`}>
       {/* Track Controls */}
       <div
-        className={`flex w-28 shrink-0 cursor-pointer flex-col gap-1 border-r px-2 py-2 sm:w-48 sm:px-3 ${
+        className={`sticky left-0 z-10 flex w-28 shrink-0 cursor-pointer flex-col gap-1 border-r px-2 py-2 sm:w-48 sm:px-3 ${
           isSelected
-            ? 'border-indigo-300 bg-indigo-50 dark:border-indigo-700 dark:bg-indigo-950/40'
-            : 'border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900/50'
+            ? 'border-indigo-300 bg-indigo-50 dark:border-indigo-700 dark:bg-indigo-950'
+            : 'border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900'
         }`}
         onClick={() => onSelectTrack?.(track.id)}
       >
@@ -50,6 +50,7 @@ export default function TrackLane({
           />
           <button
             onClick={() => updateTrack(track.id, { isMuted: !track.isMuted })}
+            title={track.isMuted ? 'Unmute track' : 'Mute track'}
             className={`rounded px-1.5 py-1 text-[10px] font-bold sm:py-0.5 ${
               track.isMuted
                 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
@@ -60,6 +61,7 @@ export default function TrackLane({
           </button>
           <button
             onClick={() => updateTrack(track.id, { isSolo: !track.isSolo })}
+            title={track.isSolo ? 'Unsolo track' : 'Solo track (mute all others)'}
             className={`rounded px-1.5 py-1 text-[10px] font-bold sm:py-0.5 ${
               track.isSolo
                 ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'

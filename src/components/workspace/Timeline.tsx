@@ -171,70 +171,69 @@ export default function Timeline({ selectedSegmentId, selectedTrackId, onSelectS
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      {/* Ruler */}
-      <div className="flex border-b border-gray-200 dark:border-gray-800">
-        <div className="flex w-28 shrink-0 items-center gap-1 border-r border-gray-200 bg-gray-50 px-2 py-1 sm:w-48 sm:px-3 dark:border-gray-800 dark:bg-gray-900/50">
-          <button
-            onClick={() => addTrack()}
-            className="rounded bg-indigo-600 px-2 py-1 text-xs font-medium text-white hover:bg-indigo-500 sm:py-0.5"
+      {/* Scrollable area: ruler + tracks */}
+      <div ref={tracksRef} className="relative flex-1 overflow-auto">
+        {/* Ruler - sticky at top */}
+        <div className="sticky top-0 z-20 flex border-b border-gray-200 dark:border-gray-800">
+          <div className="sticky left-0 z-30 flex w-28 shrink-0 items-center gap-1 border-r border-gray-200 bg-gray-50 px-2 py-1 sm:w-48 sm:px-3 dark:border-gray-800 dark:bg-gray-900">
+            <button
+              onClick={() => addTrack()}
+              className="rounded bg-indigo-600 px-2 py-1 text-xs font-medium text-white hover:bg-indigo-500 sm:py-0.5"
+            >
+              + Track
+            </button>
+            <button
+              onClick={() => setLoopEnabled(!loopEnabled)}
+              title={loopEnabled ? 'Disable loop (Shift+drag ruler to set region)' : 'Enable loop (Shift+drag ruler to set region)'}
+              className={`rounded px-1.5 py-1 text-[10px] font-bold sm:py-0.5 ${
+                loopEnabled
+                  ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                  : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+              }`}
+            >
+              Loop
+            </button>
+          </div>
+          <div
+            ref={rulerRef}
+            className="relative cursor-pointer bg-gray-50 dark:bg-gray-900/30"
+            onMouseDown={handleRulerMouseDown}
+            onMouseMove={handleRulerMouseMove}
+            onMouseUp={handleRulerMouseUp}
+            onMouseLeave={handleRulerMouseUp}
           >
-            + Track
-          </button>
-          <button
-            onClick={() => setLoopEnabled(!loopEnabled)}
-            title={loopEnabled ? 'Disable loop (Shift+drag ruler to set region)' : 'Enable loop (Shift+drag ruler to set region)'}
-            className={`rounded px-1.5 py-1 text-[10px] font-bold sm:py-0.5 ${
-              loopEnabled
-                ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
-                : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
-            }`}
-          >
-            Loop
-          </button>
-        </div>
-        <div
-          ref={rulerRef}
-          className="relative flex-1 cursor-pointer overflow-x-auto bg-gray-50 dark:bg-gray-900/30"
-          onMouseDown={handleRulerMouseDown}
-          onMouseMove={handleRulerMouseMove}
-          onMouseUp={handleRulerMouseUp}
-          onMouseLeave={handleRulerMouseUp}
-          style={{ minWidth: TOTAL_BEATS * PIXELS_PER_BEAT }}
-        >
-          <div className="relative h-6" style={{ width: TOTAL_BEATS * PIXELS_PER_BEAT }}>
-            {/* Loop region highlight */}
-            {loopEnabled && loopEnd > loopStart && (
-              <div
-                className="absolute top-0 h-full bg-amber-300/30 dark:bg-amber-500/20"
-                style={{
-                  left: loopStart * PIXELS_PER_BEAT,
-                  width: (loopEnd - loopStart) * PIXELS_PER_BEAT,
-                }}
-              >
-                {/* Loop start marker */}
-                <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-amber-500" />
-                {/* Loop end marker */}
-                <div className="absolute top-0 right-0 bottom-0 w-0.5 bg-amber-500" />
-              </div>
-            )}
+            <div className="relative h-6" style={{ width: TOTAL_BEATS * PIXELS_PER_BEAT }}>
+              {/* Loop region highlight */}
+              {loopEnabled && loopEnd > loopStart && (
+                <div
+                  className="absolute top-0 h-full bg-amber-300/30 dark:bg-amber-500/20"
+                  style={{
+                    left: loopStart * PIXELS_PER_BEAT,
+                    width: (loopEnd - loopStart) * PIXELS_PER_BEAT,
+                  }}
+                >
+                  {/* Loop start marker */}
+                  <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-amber-500" />
+                  {/* Loop end marker */}
+                  <div className="absolute top-0 right-0 bottom-0 w-0.5 bg-amber-500" />
+                </div>
+              )}
 
-            {Array.from({ length: bars }, (_, i) => (
-              <div
-                key={i}
-                className="absolute top-0 h-full border-l border-gray-300 dark:border-gray-700"
-                style={{ left: i * beatsPerBar * PIXELS_PER_BEAT }}
-              >
-                <span className="ml-1 text-[10px] text-gray-500 dark:text-gray-500">
-                  {i + 1}
-                </span>
-              </div>
-            ))}
+              {Array.from({ length: bars }, (_, i) => (
+                <div
+                  key={i}
+                  className="absolute top-0 h-full border-l border-gray-300 dark:border-gray-700"
+                  style={{ left: i * beatsPerBar * PIXELS_PER_BEAT }}
+                >
+                  <span className="ml-1 text-[10px] text-gray-500 dark:text-gray-500">
+                    {i + 1}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Tracks */}
-      <div ref={tracksRef} className="relative flex-1 overflow-auto">
         <div style={{ minWidth: TOTAL_BEATS * PIXELS_PER_BEAT + 192 }}>
           {tracks.length === 0 ? (
             <div className="flex h-40 items-center justify-center text-gray-400 dark:text-gray-600">
