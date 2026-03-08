@@ -147,105 +147,183 @@ export default function TransportBar({ selectedTrackId }: TransportBarProps) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b border-gray-200 bg-white px-2 py-1.5 sm:gap-3 sm:px-4 sm:py-2 dark:border-gray-800 dark:bg-gray-900">
+    <div className="flex flex-wrap items-center gap-1.5 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white px-2 py-1.5 sm:gap-2 sm:px-4 sm:py-2 dark:border-gray-800 dark:from-gray-900 dark:to-gray-900">
       {/* Transport Controls */}
-      <div className="flex items-center gap-0.5 sm:gap-1">
-        <button
+      <div className="flex items-center rounded-lg bg-gray-100 p-0.5 dark:bg-gray-800">
+        <TransportButton
           onClick={handleStop}
           disabled={!hasTracks}
-          className={`rounded p-2 sm:p-1.5 ${hasTracks ? 'hover:bg-gray-100 dark:hover:bg-gray-800' : 'cursor-not-allowed opacity-30'}`}
           title="Stop"
+          active={false}
         >
-          <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <rect x="4" y="4" width="12" height="12" rx="1" />
+          <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <rect x="5" y="5" width="10" height="10" rx="1" />
           </svg>
-        </button>
+        </TransportButton>
 
-        <button
+        <TransportButton
           onClick={handlePlay}
           disabled={!hasTracks}
-          className={`rounded p-2 sm:p-1.5 ${hasTracks ? 'hover:bg-gray-100 dark:hover:bg-gray-800' : 'cursor-not-allowed opacity-30'}`}
           title={isPlaying ? 'Pause' : 'Play'}
+          active={isPlaying}
+          activeColor="bg-indigo-500 text-white shadow-sm"
         >
           {isPlaying ? (
-            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M5 4h3v12H5zM12 4h3v12h-3z" />
+            <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M5.5 4h3v12h-3zM11.5 4h3v12h-3z" />
             </svg>
           ) : (
-            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M6 4l10 6-10 6z" />
+            <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M6.5 4l9 6-9 6z" />
             </svg>
           )}
-        </button>
+        </TransportButton>
 
-        <button
+        <TransportButton
           onClick={handleRecord}
           disabled={!hasTracks}
-          className={`rounded p-2 sm:p-1.5 ${!hasTracks ? 'cursor-not-allowed opacity-30' : isRecording ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
           title="Record (Keyboard)"
+          active={isRecording}
+          activeColor="bg-red-500 text-white shadow-sm"
         >
-          <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <circle cx="10" cy="10" r="6" />
+          <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <circle cx="10" cy="10" r="5" />
           </svg>
-        </button>
+        </TransportButton>
 
-        <button
+        <TransportButton
           onClick={() => handleMicRecord(selectedTrackId)}
           disabled={!hasTracks}
-          className={`rounded p-2 sm:p-1.5 ${!hasTracks ? 'cursor-not-allowed opacity-30' : isMicRecording ? 'animate-pulse bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
           title={isMicRecording ? 'Stop Mic Recording' : 'Record from Microphone'}
+          active={isMicRecording}
+          activeColor="animate-pulse bg-red-500 text-white shadow-sm"
         >
-          <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
             <path d="M10 12a3 3 0 003-3V5a3 3 0 00-6 0v4a3 3 0 003 3z" />
             <path d="M5 9a1 1 0 00-2 0 7 7 0 0014 0 1 1 0 10-2 0 5 5 0 01-10 0z" />
             <path d="M9 15.93V18H7a1 1 0 100 2h6a1 1 0 100-2h-2v-2.07A7.001 7.001 0 0017 9a1 1 0 10-2 0 5 5 0 01-10 0 1 1 0 00-2 0 7.001 7.001 0 006 6.93z" />
           </svg>
-        </button>
+        </TransportButton>
       </div>
 
       {/* Position Display */}
-      <div className="rounded bg-gray-100 px-2 py-1 font-mono text-sm sm:px-3 dark:bg-gray-800">
+      <div className="flex items-center rounded-lg bg-gray-900 px-3 py-1.5 font-mono text-sm tabular-nums text-green-400 shadow-inner dark:bg-black">
         {formatPosition(playheadPosition)}
       </div>
 
-      <div className="mx-1 hidden h-6 w-px bg-gray-200 sm:mx-2 sm:block dark:bg-gray-700" />
+      <Divider />
 
       {/* BPM */}
       <div className="flex items-center gap-1.5">
-        <label className="text-xs font-medium text-gray-500 dark:text-gray-400">BPM</label>
+        <label className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">BPM</label>
         <input
           type="number"
           min={30}
           max={300}
           value={bpm}
           onChange={(e) => setBpm(Number(e.target.value))}
-          className="w-14 rounded border border-gray-300 bg-white px-1.5 py-1 text-center text-sm sm:w-16 sm:px-2 dark:border-gray-700 dark:bg-gray-800"
+          className="w-14 rounded-md border border-gray-200 bg-white px-1.5 py-1 text-center text-sm font-medium shadow-sm sm:w-16 dark:border-gray-700 dark:bg-gray-800"
         />
       </div>
 
-      <div className="mx-1 hidden h-6 w-px bg-gray-200 sm:mx-2 sm:block dark:bg-gray-700" />
+      <Divider />
 
       {/* Toggles */}
       <div className="flex items-center gap-0.5 sm:gap-1">
-        <ToggleButton active={metronomeEnabled} onClick={() => setMetronomeEnabled(!metronomeEnabled)} label="Metro" />
-        <ToggleButton active={gridSnap} onClick={() => setGridSnap(!gridSnap)} label="Snap" />
-        <ToggleButton active={loopEnabled} onClick={() => setLoopEnabled(!loopEnabled)} label="Loop" />
+        <ToggleChip
+          active={metronomeEnabled}
+          onClick={() => setMetronomeEnabled(!metronomeEnabled)}
+          icon={
+            <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 2L6 18h8L10 2zM9 10h2v5H9v-5z" />
+            </svg>
+          }
+          label="Metro"
+        />
+        <ToggleChip
+          active={gridSnap}
+          onClick={() => setGridSnap(!gridSnap)}
+          icon={
+            <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M4 4v12M10 4v12M16 4v12M4 10h12" />
+            </svg>
+          }
+          label="Snap"
+        />
+        <ToggleChip
+          active={loopEnabled}
+          onClick={() => setLoopEnabled(!loopEnabled)}
+          icon={
+            <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 8h12l-3-3M16 12H4l3 3" />
+            </svg>
+          }
+          label="Loop"
+        />
       </div>
     </div>
   );
 }
 
-function ToggleButton({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+function Divider() {
+  return <div className="mx-0.5 hidden h-6 w-px bg-gray-200 sm:mx-1 sm:block dark:bg-gray-700" />;
+}
+
+function TransportButton({
+  onClick,
+  disabled,
+  title,
+  active,
+  activeColor,
+  children,
+}: {
+  onClick: () => void;
+  disabled: boolean;
+  title: string;
+  active: boolean;
+  activeColor?: string;
+  children: React.ReactNode;
+}) {
   return (
     <button
       onClick={onClick}
-      className={`rounded px-2.5 py-1.5 text-xs font-medium transition-colors sm:py-1 ${
-        active
-          ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
-          : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+      disabled={disabled}
+      title={title}
+      className={`rounded-md p-2 transition-all sm:p-1.5 ${
+        disabled
+          ? 'cursor-not-allowed opacity-25'
+          : active && activeColor
+            ? activeColor
+            : 'text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'
       }`}
     >
-      {label}
+      {children}
+    </button>
+  );
+}
+
+function ToggleChip({
+  active,
+  onClick,
+  icon,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-all sm:gap-1.5 sm:px-3 ${
+        active
+          ? 'bg-indigo-100 text-indigo-700 shadow-sm ring-1 ring-indigo-200 dark:bg-indigo-900/40 dark:text-indigo-300 dark:ring-indigo-800'
+          : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300'
+      }`}
+    >
+      {icon}
+      <span className="hidden sm:inline">{label}</span>
     </button>
   );
 }

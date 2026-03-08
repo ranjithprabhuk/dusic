@@ -108,38 +108,41 @@ export default function Toolbar({ selectedTrackId, selectedSegmentId }: ToolbarP
   }, [hasSelection, selectedTrackId, selectedSegment, removeSegment]);
 
   return (
-    <div className="flex items-center gap-1 border-b border-gray-200 bg-gray-50 px-4 py-1.5 dark:border-gray-800 dark:bg-gray-900/50">
-      <span className="mr-2 text-xs font-medium text-gray-500 dark:text-gray-400">Edit</span>
-      <ToolButton label="Undo" disabled={!canUndo()} onClick={undo}
-        title="Undo (Ctrl+Z)" />
-      <ToolButton label="Redo" disabled={!canRedo()} onClick={redo}
-        title="Redo (Ctrl+Shift+Z)" />
-      <div className="mx-1 h-5 w-px bg-gray-200 dark:bg-gray-700" />
-      <ToolButton label="Trim" disabled={!hasSelection} onClick={handleTrim}
-        title="Trim segment start to playhead" />
-      <ToolButton label="Cut" disabled={!hasSelection} onClick={handleCut}
-        title="Split segment at playhead" />
-      <ToolButton label="Merge" disabled={!hasSelection} onClick={handleMerge}
-        title="Merge with next segment" />
-      <div className="mx-1 h-5 w-px bg-gray-200 dark:bg-gray-700" />
-      <ToolButton label="Copy" disabled={!hasSelection} onClick={handleCopy}
-        title="Copy selected segment (Ctrl+C)" />
-      <ToolButton label="Paste" disabled={!clipboard} onClick={handlePaste}
-        title="Paste segment at playhead (Ctrl+V)" />
-      <div className="mx-1 h-5 w-px bg-gray-200 dark:bg-gray-700" />
-      <ToolButton label="Delete" disabled={!hasSelection} onClick={handleDelete}
-        title="Delete selected segment" danger />
-    </div>
+    <>
+      {/* History group */}
+      <div className="flex items-center gap-0.5 rounded-md bg-gray-100 p-0.5 dark:bg-gray-800">
+        <ToolButton icon={<UndoIcon />} label="Undo" disabled={!canUndo()} onClick={undo} title="Undo (Ctrl+Z)" />
+        <ToolButton icon={<RedoIcon />} label="Redo" disabled={!canRedo()} onClick={redo} title="Redo (Ctrl+Shift+Z)" />
+      </div>
+
+      {/* Edit group */}
+      <div className="flex items-center gap-0.5 rounded-md bg-gray-100 p-0.5 dark:bg-gray-800">
+        <ToolButton icon={<TrimIcon />} label="Trim" disabled={!hasSelection} onClick={handleTrim} title="Trim segment start to playhead" />
+        <ToolButton icon={<ScissorsIcon />} label="Split" disabled={!hasSelection} onClick={handleCut} title="Split segment at playhead" />
+        <ToolButton icon={<MergeIcon />} label="Merge" disabled={!hasSelection} onClick={handleMerge} title="Merge with next segment" />
+      </div>
+
+      {/* Clipboard group */}
+      <div className="flex items-center gap-0.5 rounded-md bg-gray-100 p-0.5 dark:bg-gray-800">
+        <ToolButton icon={<CopyIcon />} label="Copy" disabled={!hasSelection} onClick={handleCopy} title="Copy selected segment (Ctrl+C)" />
+        <ToolButton icon={<PasteIcon />} label="Paste" disabled={!clipboard} onClick={handlePaste} title="Paste segment at playhead (Ctrl+V)" />
+      </div>
+
+      {/* Delete */}
+      <ToolButton icon={<TrashIcon />} label="Delete" disabled={!hasSelection} onClick={handleDelete} title="Delete selected segment" danger />
+    </>
   );
 }
 
 function ToolButton({
+  icon,
   label,
   disabled,
   onClick,
   title,
   danger,
 }: {
+  icon: React.ReactNode;
   label: string;
   disabled: boolean;
   onClick: () => void;
@@ -151,15 +154,90 @@ function ToolButton({
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className={`rounded px-2.5 py-1.5 text-xs font-medium transition-colors sm:py-1 ${
+      className={`flex items-center gap-1 rounded px-2 py-1.5 text-xs font-medium transition-colors sm:py-1 ${
         disabled
           ? 'cursor-not-allowed text-gray-300 dark:text-gray-700'
           : danger
-            ? 'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20'
-            : 'text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800'
+            ? 'text-red-500 hover:bg-red-50 hover:text-red-600 dark:text-red-400 dark:hover:bg-red-900/20'
+            : 'text-gray-600 hover:bg-white hover:text-gray-800 hover:shadow-sm dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'
       }`}
     >
-      {label}
+      {icon}
+      <span className="hidden lg:inline">{label}</span>
     </button>
+  );
+}
+
+// --- Inline SVG icons (14x14) ---
+
+function UndoIcon() {
+  return (
+    <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 7h10a4 4 0 110 8H9" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M7 3L3 7l4 4" />
+    </svg>
+  );
+}
+
+function RedoIcon() {
+  return (
+    <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M17 7H7a4 4 0 100 8h4" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13 3l4 4-4 4" />
+    </svg>
+  );
+}
+
+function TrimIcon() {
+  return (
+    <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path strokeLinecap="round" d="M4 4v12M8 6h9v8H8z" />
+    </svg>
+  );
+}
+
+function ScissorsIcon() {
+  return (
+    <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="6" cy="6" r="2.5" />
+      <circle cx="6" cy="14" r="2.5" />
+      <path strokeLinecap="round" d="M8.2 7.5L16 16M8.2 12.5L16 4" />
+    </svg>
+  );
+}
+
+function MergeIcon() {
+  return (
+    <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 4l4 4-4 4M14 4l-4 4 4 4" />
+    </svg>
+  );
+}
+
+function CopyIcon() {
+  return (
+    <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="7" y="7" width="10" height="10" rx="1.5" />
+      <path d="M13 7V4.5A1.5 1.5 0 0011.5 3h-8A1.5 1.5 0 002 4.5v8A1.5 1.5 0 003.5 14H7" />
+    </svg>
+  );
+}
+
+function PasteIcon() {
+  return (
+    <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="4" y="5" width="12" height="12" rx="1.5" />
+      <path d="M7 5V4a1 1 0 011-1h4a1 1 0 011 1v1" />
+      <path strokeLinecap="round" d="M8 10h4M8 13h4" />
+    </svg>
+  );
+}
+
+function TrashIcon() {
+  return (
+    <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path strokeLinecap="round" d="M4 6h12M8 6V4h4v2M6 6v10a1 1 0 001 1h6a1 1 0 001-1V6" />
+      <path strokeLinecap="round" d="M9 9v5M11 9v5" />
+    </svg>
   );
 }
