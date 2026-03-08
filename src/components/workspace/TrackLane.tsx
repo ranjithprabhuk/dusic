@@ -33,8 +33,8 @@ export default function TrackLane({
       <div
         className={`sticky left-0 z-10 flex w-28 shrink-0 cursor-pointer flex-col justify-center gap-1.5 border-r px-2 py-2 transition-colors sm:w-48 sm:px-3 ${
           isSelected
-            ? 'border-indigo-300 bg-gradient-to-r from-indigo-50 to-indigo-50/50 dark:border-indigo-700 dark:from-indigo-950/80 dark:to-indigo-950/40'
-            : 'border-gray-200 bg-gradient-to-r from-gray-50 to-gray-50/50 hover:from-gray-100 dark:border-gray-800 dark:from-gray-900 dark:to-gray-900/50 dark:hover:from-gray-800/80'
+            ? 'border-indigo-300 bg-indigo-50 dark:border-indigo-700 dark:bg-indigo-950'
+            : 'border-gray-200 bg-gray-50 hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800'
         }`}
         onClick={() => onSelectTrack?.(track.id)}
       >
