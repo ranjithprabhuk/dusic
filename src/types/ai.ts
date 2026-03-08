@@ -1,5 +1,5 @@
 export interface AIConfig {
-  provider: 'openai' | 'custom';
+  provider: 'openai' | 'claude' | 'gemini' | 'custom';
   apiKey: string;
   endpoint?: string;
   model?: string;

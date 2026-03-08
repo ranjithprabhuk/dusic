@@ -52,6 +52,8 @@ export default function AISettingsForm() {
           className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
         >
           <option value="openai">OpenAI</option>
+          <option value="claude">Claude (Anthropic)</option>
+          <option value="gemini">Gemini (Google)</option>
           <option value="custom">Custom Endpoint</option>
         </select>
       </div>
@@ -62,7 +64,11 @@ export default function AISettingsForm() {
           type="password"
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
-          placeholder="sk-..."
+          placeholder={
+            provider === 'openai' ? 'sk-...' :
+            provider === 'claude' ? 'sk-ant-...' :
+            provider === 'gemini' ? 'AIza...' : 'API key'
+          }
           className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
         />
       </div>
@@ -86,7 +92,11 @@ export default function AISettingsForm() {
           type="text"
           value={model}
           onChange={(e) => setModel(e.target.value)}
-          placeholder={provider === 'openai' ? 'gpt-4o' : 'model-name'}
+          placeholder={
+            provider === 'openai' ? 'gpt-4o' :
+            provider === 'claude' ? 'claude-sonnet-4-6 or claude-opus-4-6' :
+            provider === 'gemini' ? 'gemini-2.0-flash' : 'model-name'
+          }
           className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
         />
       </div>
