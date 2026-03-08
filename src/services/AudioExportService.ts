@@ -1,4 +1,4 @@
-import { Mp3Encoder } from 'lamejs';
+import { Mp3Encoder } from '../lib/mp3encoder';
 
 class AudioExportService {
   exportWav(buffer: AudioBuffer): Blob {
