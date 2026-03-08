@@ -140,8 +140,25 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="relative border-t border-gray-200 px-6 py-6 text-center text-xs text-gray-400 dark:border-gray-800 dark:text-gray-600">
-        Dusic — Browser-based music studio. No installation required.
+      <footer className="relative border-t border-gray-200 px-6 py-8 dark:border-gray-800">
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-xs text-gray-400 dark:text-gray-600">
+            Crafted with
+            <span className="mx-1 inline-block animate-pulse text-red-500">&#9829;</span>
+            by{' '}
+            <a
+              href="https://ranjithprabhuk.github.io/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-gray-500 transition-colors hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400"
+            >
+              Ranjithprabhu
+            </a>
+          </p>
+          <p className="text-[10px] text-gray-300 dark:text-gray-700">
+            Browser-based music studio. No installation required.
+          </p>
+        </div>
       </footer>
     </div>
   );
